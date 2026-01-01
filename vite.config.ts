@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 
 // https://vite.dev/config/
-export default defineConfig(({ command }) => ({
+export default defineConfig({
   plugins: [
     react({
       babel: {
@@ -11,11 +11,11 @@ export default defineConfig(({ command }) => ({
       },
     }),
   ],
-  // Only use base path for production builds (GitHub Pages)
-  base: command === 'build' ? '/clock-claude/' : '/',
+  // Custom domain clock.catrgb.com serves from root
+  base: '/',
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
     },
   },
-}));
+});
