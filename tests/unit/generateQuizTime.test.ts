@@ -30,12 +30,13 @@ describe('generateQuizTime', () => {
   });
 
   describe('hard difficulty', () => {
-    it('generates 5-minute increment times', () => {
+    it('generates any minute from 0-59', () => {
       for (let i = 0; i < 20; i++) {
         const time = generateQuizTime('hard');
-        expect(time.minutes % 5).toBe(0);
         expect(time.minutes).toBeGreaterThanOrEqual(0);
-        expect(time.minutes).toBeLessThanOrEqual(55);
+        expect(time.minutes).toBeLessThanOrEqual(59);
+        expect(time.hours).toBeGreaterThanOrEqual(1);
+        expect(time.hours).toBeLessThanOrEqual(12);
       }
     });
   });

@@ -1,7 +1,9 @@
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ClockFace } from './ClockFace';
 import { ClockHand } from './ClockHand';
 import { useThemeStore } from '../../stores/themeStore';
+import { useGameStore } from '../../stores/gameStore';
 import { getTheme } from '../../themes';
 import { useClockDrag } from '../../hooks/useClockDrag';
 import { useTime } from '../../hooks/useTime';
@@ -15,6 +17,7 @@ export function AnalogClock({ size = 300, interactive = true }: AnalogClockProps
   const theme = useThemeStore((state) => state.theme);
   const colors = getTheme(theme).colors;
   const { hourAngle, minuteAngle, setMinutes, setHours } = useTime();
+  const setIsDragging = useGameStore((state) => state.setIsDragging);
 
   const center = size / 2;
   const hourLength = size * 0.25;
@@ -39,6 +42,11 @@ export function AnalogClock({ size = 300, interactive = true }: AnalogClockProps
     onHourChange: handleHourChange,
     snapToFive: false,
   });
+
+  // Sync dragging state to game store for text display
+  useEffect(() => {
+    setIsDragging(isDraggingMinute || isDraggingHour);
+  }, [isDraggingMinute, isDraggingHour, setIsDragging]);
 
   return (
     <motion.div

@@ -9,6 +9,10 @@ interface GameState {
   currentTime: Time;
   setCurrentTime: (time: Time) => void;
 
+  // Dragging state for clock hands
+  isDragging: boolean;
+  setIsDragging: (dragging: boolean) => void;
+
   // Score tracking
   score: number;
   streak: number;
@@ -64,6 +68,10 @@ export const useGameStore = create<GameState>()(
       // Current time - default to 3:00 PM
       currentTime: { hours: 3, minutes: 0, period: 'PM' },
       setCurrentTime: (time) => set({ currentTime: time }),
+
+      // Dragging state
+      isDragging: false,
+      setIsDragging: (dragging) => set({ isDragging: dragging }),
 
       // Score
       score: 0,

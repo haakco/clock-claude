@@ -38,9 +38,8 @@ export function generateQuizTime(difficulty: Difficulty): Time {
     }
 
     case 'hard':
-      // Any 5-minute increment
-      // 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55
-      minutes = Math.floor(Math.random() * 12) * 5;
+      // Any minute from 0-59
+      minutes = Math.floor(Math.random() * 60);
       break;
 
     default:

@@ -1,10 +1,11 @@
-import { useCallback } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Volume2 } from 'lucide-react';
 import { Time } from '../../types';
 import { formatTime12, formatTime24 } from '../../utils/timeConversion';
 import { timeToWords } from '../../utils/timeToWords';
 import { useThemeStore } from '../../stores/themeStore';
+import { useGameStore } from '../../stores/gameStore';
 import { getTheme } from '../../themes';
 import { useSpeech } from '../../hooks/useSpeech';
 
@@ -22,14 +23,27 @@ export function DigitalTime({
   const theme = useThemeStore((state) => state.theme);
   const colors = getTheme(theme).colors;
   const { speakTime } = useSpeech();
+  const isDragging = useGameStore((state) => state.isDragging);
 
-  const time12 = formatTime12(time);
-  const time24 = formatTime24(time);
-  const words = timeToWords(time);
+  // Display time only updates when dragging stops (or on initial render)
+  const [displayTime, setDisplayTime] = useState<Time>(time);
+  const wasDragging = useRef(false);
+
+  useEffect(() => {
+    // Update display time when drag ends or when not dragging at all
+    if (!isDragging && (wasDragging.current || displayTime === time)) {
+      setDisplayTime(time);
+    }
+    wasDragging.current = isDragging;
+  }, [isDragging, time, displayTime]);
+
+  const time12 = formatTime12(displayTime);
+  const time24 = formatTime24(displayTime);
+  const words = timeToWords(displayTime);
 
   const handleSpeak = useCallback(() => {
-    speakTime(time.hours, time.minutes, time.period);
-  }, [speakTime, time.hours, time.minutes, time.period]);
+    speakTime(displayTime.hours, displayTime.minutes, displayTime.period);
+  }, [speakTime, displayTime.hours, displayTime.minutes, displayTime.period]);
 
   return (
     <motion.div
