@@ -5,7 +5,6 @@ import { useThemeStore } from '../../stores/themeStore';
 import { getTheme } from '../../themes';
 import { useClockDrag } from '../../hooks/useClockDrag';
 import { useTime } from '../../hooks/useTime';
-import { useSound } from '../../hooks/useSound';
 
 interface AnalogClockProps {
   size?: number;
@@ -16,19 +15,16 @@ export function AnalogClock({ size = 300, interactive = true }: AnalogClockProps
   const theme = useThemeStore((state) => state.theme);
   const colors = getTheme(theme).colors;
   const { hourAngle, minuteAngle, setMinutes, setHours } = useTime();
-  const { playSound } = useSound();
 
   const center = size / 2;
   const hourLength = size * 0.25;
   const minuteLength = size * 0.38;
 
   const handleMinuteChange = (minutes: number) => {
-    playSound('tick');
     setMinutes(minutes);
   };
 
   const handleHourChange = (hours: number) => {
-    playSound('tick');
     setHours(hours);
   };
 
@@ -41,7 +37,7 @@ export function AnalogClock({ size = 300, interactive = true }: AnalogClockProps
   } = useClockDrag({
     onMinuteChange: handleMinuteChange,
     onHourChange: handleHourChange,
-    snapToFive: true,
+    snapToFive: false,
   });
 
   return (
