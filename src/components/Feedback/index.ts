@@ -1,0 +1,1 @@
+export { EncouragingMessage } from './EncouragingMessage';

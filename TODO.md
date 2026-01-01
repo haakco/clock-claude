@@ -15,19 +15,19 @@ Development task list for the Clock Learning Game project. See [docs/plan.md](do
 ### Scaffolding
 _Reference: [Technology Stack](docs/plan.md#technology-stack) | [Project Structure](docs/plan.md#project-structure)_
 
-- [ ] Initialize Vite + React + TypeScript project
-- [ ] Configure Tailwind CSS
-- [ ] Set up ESLint and Prettier
-- [ ] Configure Vitest for unit testing
-- [ ] Configure Playwright for E2E testing
-- [ ] Create folder structure per plan
+- [x] Initialize Vite + React + TypeScript project
+- [x] Configure Tailwind CSS
+- [x] Set up ESLint and Prettier
+- [x] Configure Vitest for unit testing
+- [x] Configure Playwright for E2E testing
+- [x] Create folder structure per plan
 
 ### CI/CD
 _Reference: [Project Structure](docs/plan.md#project-structure)_
 
-- [ ] Create GitHub Actions workflow for CI (test on PR)
-- [ ] Create GitHub Actions workflow for deployment (GitHub Pages)
-- [ ] Configure build and preview scripts
+- [x] Create GitHub Actions workflow for CI (test on PR)
+- [x] Create GitHub Actions workflow for deployment (GitHub Pages)
+- [x] Configure build and preview scripts
 
 ---
 
@@ -36,36 +36,36 @@ _Reference: [Project Structure](docs/plan.md#project-structure)_
 ### Main Interactive Clock
 _Reference: [Main Interactive Clock](docs/plan.md#1-main-interactive-clock)_
 
-- [ ] Create `ClockFace` component with numbers 1-12
-- [ ] Create `ClockHand` component (reusable for hour/minute)
-- [ ] Implement `AnalogClock` container component
-- [ ] Add drag functionality for minute hand
-- [ ] Add drag functionality for hour hand
-- [ ] Implement hour hand auto-movement when minute hand moves
-- [ ] Add visual feedback on drag (highlight, glow)
-- [ ] Make clock responsive
-- [ ] Add touch support for mobile/tablet
+- [x] Create `ClockFace` component with numbers 1-12
+- [x] Create `ClockHand` component (reusable for hour/minute)
+- [x] Implement `AnalogClock` container component
+- [x] Add drag functionality for minute hand
+- [x] Add drag functionality for hour hand
+- [x] Implement hour hand auto-movement when minute hand moves
+- [x] Add visual feedback on drag (highlight, glow)
+- [x] Make clock responsive
+- [x] Add touch support for mobile/tablet
 
 ### Digital Display
 _Reference: [Digital Time Display](docs/plan.md#2-digital-time-display)_
 
-- [ ] Create `DigitalTime` display component (12hr and 24hr)
-- [ ] Create `WheelPicker` component (Apple-style scroll picker)
-- [ ] Implement hour wheel (1-12, looping)
-- [ ] Implement minute wheel (00-59, looping)
-- [ ] Implement AM/PM wheel
-- [ ] Create `TimeInput` combined component
-- [ ] Sync digital input with analog clock
+- [x] Create `DigitalTime` display component (12hr and 24hr)
+- [x] Create `WheelPicker` component (Apple-style scroll picker)
+- [x] Implement hour wheel (1-12, looping)
+- [x] Implement minute wheel (00-59, looping)
+- [x] Implement AM/PM wheel
+- [x] Create `TimeInput` combined component
+- [x] Sync digital input with analog clock
 
 ### Time in Words
 _Reference: [Time in Words Display](docs/plan.md#3-time-in-words-display)_
 
-- [ ] Create `timeToWords` utility function
-- [ ] Handle o'clock times
-- [ ] Handle half past times
-- [ ] Handle quarter past/to times
-- [ ] Handle 5-minute increments (five past, ten to, etc.)
-- [ ] Create display component for time in words
+- [x] Create `timeToWords` utility function
+- [x] Handle o'clock times
+- [x] Handle half past times
+- [x] Handle quarter past/to times
+- [x] Handle 5-minute increments (five past, ten to, etc.)
+- [x] Create display component for time in words
 
 ---
 
@@ -74,33 +74,33 @@ _Reference: [Time in Words Display](docs/plan.md#3-time-in-words-display)_
 ### Mini Clock Quiz
 _Reference: [Quiz Section - Small Clocks](docs/plan.md#4-quiz-section---small-clocks)_
 
-- [ ] Create `MiniClock` component (static, smaller version)
-- [ ] Create `QuizCard` component with clock + input + check button
-- [ ] Create `ClockQuiz` container for 3 quiz cards
-- [ ] Implement `generateQuizTime` utility (respects difficulty)
-- [ ] Add answer validation logic
-- [ ] Implement correct answer feedback (green glow)
-- [ ] Implement incorrect answer feedback (red shake)
-- [ ] Add new random time after correct answer
+- [x] Create `MiniClock` component (static, smaller version)
+- [x] Create `QuizCard` component with clock + input + check button
+- [x] Create `ClockQuiz` container for 3 quiz cards
+- [x] Implement `generateQuizTime` utility (respects difficulty)
+- [x] Add answer validation logic
+- [x] Implement correct answer feedback (green glow)
+- [x] Implement incorrect answer feedback (red shake)
+- [x] Add new random time after correct answer
 
 ### Word Problems
 _Reference: [Word Problems Section](docs/plan.md#5-word-problems-section)_
 
-- [ ] Create `WordProblem` component
-- [ ] Generate random word problem based on difficulty
-- [ ] Add wheel picker input for answer
-- [ ] Implement answer validation
-- [ ] Add feedback animations
+- [x] Create `WordProblem` component
+- [x] Generate random word problem based on difficulty
+- [x] Add wheel picker input for answer
+- [x] Implement answer validation
+- [x] Add feedback animations
 
 ### Difficulty System
 _Reference: [Difficulty Levels](docs/plan.md#6-difficulty-levels)_
 
-- [ ] Create `DifficultySelector` component
-- [ ] Implement Easy mode (o'clock only)
-- [ ] Implement Medium mode (o'clock, half, quarters)
-- [ ] Implement Hard mode (5-minute increments)
-- [ ] Store difficulty preference
-- [ ] Filter quiz times by difficulty
+- [x] Create `DifficultySelector` component
+- [x] Implement Easy mode (o'clock only)
+- [x] Implement Medium mode (o'clock, half, quarters)
+- [x] Implement Hard mode (5-minute increments)
+- [x] Store difficulty preference
+- [x] Filter quiz times by difficulty
 
 ---
 
@@ -109,33 +109,33 @@ _Reference: [Difficulty Levels](docs/plan.md#6-difficulty-levels)_
 ### Theme System
 _Reference: [Theme Toggle](docs/plan.md#7-theme-toggle)_
 
-- [ ] Create theme store with Zustand
-- [ ] Define Blue theme colors and config
-- [ ] Define Pink theme colors and config
-- [ ] Create `ThemeToggle` component
-- [ ] Apply theme to clock face
-- [ ] Apply theme to clock hands
-- [ ] Apply theme to background
+- [x] Create theme store with Zustand
+- [x] Define Blue theme colors and config
+- [x] Define Pink theme colors and config
+- [x] Create `ThemeToggle` component
+- [x] Apply theme to clock face
+- [x] Apply theme to clock hands
+- [x] Apply theme to background
 
 ### Decorations
 _Reference: [Theme Toggle](docs/plan.md#7-theme-toggle)_
 
-- [ ] Create/source Blue theme decorations (rockets, dinosaurs, cars, stars)
-- [ ] Create/source Pink theme decorations (butterflies, flowers, unicorns, hearts)
-- [ ] Create `BlueThemeDecorations` component
-- [ ] Create `PinkThemeDecorations` component
-- [ ] Position decorations around UI
+- [x] Create/source Blue theme decorations (rockets, dinosaurs, cars, stars)
+- [x] Create/source Pink theme decorations (butterflies, flowers, unicorns, hearts)
+- [x] Create `BlueThemeDecorations` component
+- [x] Create `PinkThemeDecorations` component
+- [x] Position decorations around UI
 
 ### Sound Effects
 _Reference: [Sound Effects](docs/plan.md#8-sound-effects)_
 
-- [ ] Set up Howler.js
-- [ ] Add tick sound for hand movement
-- [ ] Add celebration sound for correct answers
-- [ ] Add gentle sound for incorrect answers
-- [ ] Add button click sounds
-- [ ] Create mute/unmute toggle
-- [ ] Create `useSound` hook
+- [x] Set up Howler.js
+- [x] Add tick sound for hand movement
+- [x] Add celebration sound for correct answers
+- [x] Add gentle sound for incorrect answers
+- [x] Add button click sounds
+- [x] Create mute/unmute toggle
+- [x] Create `useSound` hook
 
 ---
 
@@ -144,20 +144,20 @@ _Reference: [Sound Effects](docs/plan.md#8-sound-effects)_
 ### Score System
 _Reference: [Score and Progress](docs/plan.md#9-score-and-progress)_
 
-- [ ] Create game store with Zustand
-- [ ] Implement points counter
-- [ ] Implement streak counter
-- [ ] Create `ScoreDisplay` component
-- [ ] Show encouraging messages based on progress
+- [x] Create game store with Zustand
+- [x] Implement points counter
+- [x] Implement streak counter
+- [x] Create `ScoreDisplay` component
+- [x] Show encouraging messages based on progress
 
 ### Feedback Animations
 _Reference: [Quiz Section - Small Clocks](docs/plan.md#4-quiz-section---small-clocks)_
 
-- [ ] Set up canvas-confetti
-- [ ] Create `CorrectAnimation` component with confetti
-- [ ] Create `IncorrectAnimation` component with shake
-- [ ] Create `EncouragingMessage` component
-- [ ] Implement animation triggers
+- [x] Set up canvas-confetti
+- [x] Create `CorrectAnimation` component with confetti
+- [x] Create `IncorrectAnimation` component with shake
+- [x] Create `EncouragingMessage` component
+- [x] Implement animation triggers
 
 ---
 
@@ -166,18 +166,18 @@ _Reference: [Quiz Section - Small Clocks](docs/plan.md#4-quiz-section---small-cl
 ### Main Layout
 _Reference: [UI Layout Design](docs/plan.md#ui-layout-design)_
 
-- [ ] Create `Header` component with title and theme toggle
-- [ ] Create main layout grid (clock left, quiz right)
-- [ ] Add "New Questions" button
-- [ ] Style overall app container
+- [x] Create `Header` component with title and theme toggle
+- [x] Create main layout grid (clock left, quiz right)
+- [x] Add "New Questions" button
+- [x] Style overall app container
 
 ### Responsive Design
 _Reference: [Responsive Design](docs/plan.md#responsive-design)_
 
-- [ ] Implement desktop layout (side-by-side)
-- [ ] Implement tablet layout (stacked)
-- [ ] Implement mobile layout (single column)
-- [ ] Ensure 44x44px minimum touch targets
+- [x] Implement desktop layout (side-by-side)
+- [x] Implement tablet layout (stacked)
+- [x] Implement mobile layout (single column)
+- [x] Ensure 44x44px minimum touch targets
 - [ ] Test on various screen sizes
 
 ---
@@ -187,9 +187,9 @@ _Reference: [Responsive Design](docs/plan.md#responsive-design)_
 ### Unit Tests
 _Reference: [Testing Strategy](docs/plan.md#testing-strategy)_
 
-- [ ] Test `timeConversion` utilities
-- [ ] Test `timeToWords` function
-- [ ] Test `generateQuizTime` function
+- [x] Test `timeConversion` utilities
+- [x] Test `timeToWords` function
+- [x] Test `generateQuizTime` function
 - [ ] Test score calculation logic
 
 ### Component Tests
@@ -203,10 +203,10 @@ _Reference: [Testing Strategy](docs/plan.md#testing-strategy)_
 ### E2E Tests
 _Reference: [Testing Strategy](docs/plan.md#testing-strategy)_
 
-- [ ] Test complete quiz flow
+- [x] Test complete quiz flow (scaffolded)
 - [ ] Test clock hand dragging
 - [ ] Test digital-to-analog sync
-- [ ] Test theme switching
+- [x] Test theme switching (scaffolded)
 - [ ] Test mobile touch interactions
 
 ---
@@ -219,8 +219,8 @@ _Reference: [Testing Strategy](docs/plan.md#testing-strategy)_
 - [x] Create TODO.md
 
 ### Deployment
-- [ ] Configure Vite for GitHub Pages base path
-- [ ] Test production build locally
+- [x] Configure Vite for GitHub Pages base path
+- [x] Test production build locally
 - [ ] Deploy to GitHub Pages
 - [ ] Verify deployment works correctly
 
