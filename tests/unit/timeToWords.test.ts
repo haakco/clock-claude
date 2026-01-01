@@ -2,111 +2,183 @@ import { describe, it, expect } from 'vitest';
 import { timeToWords, wordsToTime } from '../../src/utils/timeToWords';
 
 describe('timeToWords', () => {
-  describe('o\'clock times', () => {
-    it('converts 3:00 to "three o\'clock"', () => {
-      expect(timeToWords({ hours: 3, minutes: 0, period: 'PM' })).toBe(
-        "three o'clock"
-      );
+  describe("o'clock times", () => {
+    it('converts 3:00 to one of the valid phrases', () => {
+      const validPhrases = [
+        "three o'clock",
+        'exactly three',
+        'three on the dot',
+        "precisely three o'clock",
+      ];
+      const result = timeToWords({ hours: 3, minutes: 0, period: 'PM' });
+      expect(validPhrases).toContain(result);
     });
 
-    it('converts 12:00 to "twelve o\'clock"', () => {
-      expect(timeToWords({ hours: 12, minutes: 0, period: 'AM' })).toBe(
-        "twelve o'clock"
-      );
+    it('converts 12:00 to one of the valid phrases', () => {
+      const validPhrases = [
+        "twelve o'clock",
+        'exactly twelve',
+        'twelve on the dot',
+        "precisely twelve o'clock",
+      ];
+      const result = timeToWords({ hours: 12, minutes: 0, period: 'AM' });
+      expect(validPhrases).toContain(result);
     });
   });
 
   describe('quarter past', () => {
-    it('converts 3:15 to "quarter past three"', () => {
-      expect(timeToWords({ hours: 3, minutes: 15, period: 'PM' })).toBe(
-        'quarter past three'
-      );
+    it('converts 3:15 to one of the valid phrases', () => {
+      const validPhrases = [
+        'quarter past three',
+        'a quarter after three',
+        'fifteen past three',
+        'three fifteen',
+      ];
+      const result = timeToWords({ hours: 3, minutes: 15, period: 'PM' });
+      expect(validPhrases).toContain(result);
     });
 
-    it('converts 12:15 to "quarter past twelve"', () => {
-      expect(timeToWords({ hours: 12, minutes: 15, period: 'AM' })).toBe(
-        'quarter past twelve'
-      );
+    it('converts 12:15 to one of the valid phrases', () => {
+      const validPhrases = [
+        'quarter past twelve',
+        'a quarter after twelve',
+        'fifteen past twelve',
+        'twelve fifteen',
+      ];
+      const result = timeToWords({ hours: 12, minutes: 15, period: 'AM' });
+      expect(validPhrases).toContain(result);
     });
   });
 
   describe('half past', () => {
-    it('converts 3:30 to "half past three"', () => {
-      expect(timeToWords({ hours: 3, minutes: 30, period: 'PM' })).toBe(
-        'half past three'
-      );
+    it('converts 3:30 to one of the valid phrases', () => {
+      const validPhrases = [
+        'half past three',
+        'three thirty',
+        'thirty past three',
+        'halfway past three',
+      ];
+      const result = timeToWords({ hours: 3, minutes: 30, period: 'PM' });
+      expect(validPhrases).toContain(result);
     });
 
-    it('converts 12:30 to "half past twelve"', () => {
-      expect(timeToWords({ hours: 12, minutes: 30, period: 'AM' })).toBe(
-        'half past twelve'
-      );
+    it('converts 12:30 to one of the valid phrases', () => {
+      const validPhrases = [
+        'half past twelve',
+        'twelve thirty',
+        'thirty past twelve',
+        'halfway past twelve',
+      ];
+      const result = timeToWords({ hours: 12, minutes: 30, period: 'AM' });
+      expect(validPhrases).toContain(result);
     });
   });
 
   describe('quarter to', () => {
-    it('converts 3:45 to "quarter to four"', () => {
-      expect(timeToWords({ hours: 3, minutes: 45, period: 'PM' })).toBe(
-        'quarter to four'
-      );
+    it('converts 3:45 to one of the valid phrases', () => {
+      const validPhrases = [
+        'quarter to four',
+        'a quarter before four',
+        'fifteen to four',
+        'three forty-five',
+      ];
+      const result = timeToWords({ hours: 3, minutes: 45, period: 'PM' });
+      expect(validPhrases).toContain(result);
     });
 
-    it('converts 12:45 to "quarter to one"', () => {
-      expect(timeToWords({ hours: 12, minutes: 45, period: 'AM' })).toBe(
-        'quarter to one'
-      );
+    it('converts 12:45 to one of the valid phrases', () => {
+      const validPhrases = [
+        'quarter to one',
+        'a quarter before one',
+        'fifteen to one',
+        'twelve forty-five',
+      ];
+      const result = timeToWords({ hours: 12, minutes: 45, period: 'AM' });
+      expect(validPhrases).toContain(result);
     });
   });
 
   describe('minutes past', () => {
-    it('converts 3:05 to "five past three"', () => {
-      expect(timeToWords({ hours: 3, minutes: 5, period: 'PM' })).toBe(
-        'five past three'
-      );
+    it('converts 3:05 to one of the valid phrases', () => {
+      const validPhrases = [
+        'five past three',
+        'five after three',
+        'three five',
+      ];
+      const result = timeToWords({ hours: 3, minutes: 5, period: 'PM' });
+      expect(validPhrases).toContain(result);
     });
 
-    it('converts 3:10 to "ten past three"', () => {
-      expect(timeToWords({ hours: 3, minutes: 10, period: 'PM' })).toBe(
-        'ten past three'
-      );
+    it('converts 3:10 to one of the valid phrases', () => {
+      const validPhrases = [
+        'ten past three',
+        'ten after three',
+        'three ten',
+      ];
+      const result = timeToWords({ hours: 3, minutes: 10, period: 'PM' });
+      expect(validPhrases).toContain(result);
     });
 
-    it('converts 3:20 to "twenty past three"', () => {
-      expect(timeToWords({ hours: 3, minutes: 20, period: 'PM' })).toBe(
-        'twenty past three'
-      );
+    it('converts 3:20 to one of the valid phrases', () => {
+      const validPhrases = [
+        'twenty past three',
+        'twenty after three',
+        'three twenty',
+      ];
+      const result = timeToWords({ hours: 3, minutes: 20, period: 'PM' });
+      expect(validPhrases).toContain(result);
     });
 
-    it('converts 3:25 to "twenty-five past three"', () => {
-      expect(timeToWords({ hours: 3, minutes: 25, period: 'PM' })).toBe(
-        'twenty-five past three'
-      );
+    it('converts 3:25 to one of the valid phrases', () => {
+      const validPhrases = [
+        'twenty-five past three',
+        'twenty-five after three',
+        'three twenty five',
+      ];
+      const result = timeToWords({ hours: 3, minutes: 25, period: 'PM' });
+      expect(validPhrases).toContain(result);
     });
   });
 
   describe('minutes to', () => {
-    it('converts 3:55 to "five to four"', () => {
-      expect(timeToWords({ hours: 3, minutes: 55, period: 'PM' })).toBe(
-        'five to four'
-      );
+    it('converts 3:55 to one of the valid phrases', () => {
+      const validPhrases = [
+        'five to four',
+        'five before four',
+        'five until four',
+      ];
+      const result = timeToWords({ hours: 3, minutes: 55, period: 'PM' });
+      expect(validPhrases).toContain(result);
     });
 
-    it('converts 3:50 to "ten to four"', () => {
-      expect(timeToWords({ hours: 3, minutes: 50, period: 'PM' })).toBe(
-        'ten to four'
-      );
+    it('converts 3:50 to one of the valid phrases', () => {
+      const validPhrases = [
+        'ten to four',
+        'ten before four',
+        'ten until four',
+      ];
+      const result = timeToWords({ hours: 3, minutes: 50, period: 'PM' });
+      expect(validPhrases).toContain(result);
     });
 
-    it('converts 3:40 to "twenty to four"', () => {
-      expect(timeToWords({ hours: 3, minutes: 40, period: 'PM' })).toBe(
-        'twenty to four'
-      );
+    it('converts 3:40 to one of the valid phrases', () => {
+      const validPhrases = [
+        'twenty to four',
+        'twenty before four',
+        'twenty until four',
+      ];
+      const result = timeToWords({ hours: 3, minutes: 40, period: 'PM' });
+      expect(validPhrases).toContain(result);
     });
 
-    it('converts 3:35 to "twenty-five to four"', () => {
-      expect(timeToWords({ hours: 3, minutes: 35, period: 'PM' })).toBe(
-        'twenty-five to four'
-      );
+    it('converts 3:35 to one of the valid phrases', () => {
+      const validPhrases = [
+        'twenty-five to four',
+        'twenty-five before four',
+        'twenty-five until four',
+      ];
+      const result = timeToWords({ hours: 3, minutes: 35, period: 'PM' });
+      expect(validPhrases).toContain(result);
     });
   });
 });

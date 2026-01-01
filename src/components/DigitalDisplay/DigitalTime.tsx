@@ -5,7 +5,6 @@ import { Time } from '../../types';
 import { formatTime12, formatTime24 } from '../../utils/timeConversion';
 import { timeToWords } from '../../utils/timeToWords';
 import { useThemeStore } from '../../stores/themeStore';
-import { useGameStore } from '../../stores/gameStore';
 import { getTheme } from '../../themes';
 import { useSpeech } from '../../hooks/useSpeech';
 
@@ -23,19 +22,23 @@ export function DigitalTime({
   const theme = useThemeStore((state) => state.theme);
   const colors = getTheme(theme).colors;
   const { speakTime } = useSpeech();
-  const isDragging = useGameStore((state) => state.isDragging);
 
-  // Display time only updates when dragging stops (or on initial render)
+  // Display time only updates when crossing 5-minute boundaries
   const [displayTime, setDisplayTime] = useState<Time>(time);
-  const wasDragging = useRef(false);
+  const lastRoundedMinute = useRef(Math.floor(time.minutes / 5) * 5);
 
   useEffect(() => {
-    // Update display time when drag ends or when not dragging at all
-    if (!isDragging && (wasDragging.current || displayTime === time)) {
-      setDisplayTime(time);
+    const roundedMinute = Math.floor(time.minutes / 5) * 5;
+    const hourChanged = time.hours !== displayTime.hours;
+    const periodChanged = time.period !== displayTime.period;
+    const fiveMinBoundaryChanged = roundedMinute !== lastRoundedMinute.current;
+
+    // Update display when crossing 5-minute boundaries or hour/period changes
+    if (hourChanged || periodChanged || fiveMinBoundaryChanged) {
+      setDisplayTime({ ...time, minutes: roundedMinute });
+      lastRoundedMinute.current = roundedMinute;
     }
-    wasDragging.current = isDragging;
-  }, [isDragging, time, displayTime]);
+  }, [time, displayTime.hours, displayTime.period]);
 
   const time12 = formatTime12(displayTime);
   const time24 = formatTime24(displayTime);

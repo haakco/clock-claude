@@ -42,7 +42,14 @@ function getNextHour(hour: number): number {
 }
 
 /**
- * Convert a time to English words
+ * Pick a random item from an array
+ */
+function randomPick<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+/**
+ * Convert a time to English words with random variety
  */
 export function timeToWords(time: Time): string {
   const { hours, minutes } = time;
@@ -50,32 +57,60 @@ export function timeToWords(time: Time): string {
 
   // On the hour
   if (minutes === 0) {
-    return `${hourWord} o'clock`;
+    const phrases = [
+      `${hourWord} o'clock`,
+      `exactly ${hourWord}`,
+      `${hourWord} on the dot`,
+      `precisely ${hourWord} o'clock`,
+    ];
+    return randomPick(phrases);
   }
 
   // Quarter past
   if (minutes === 15) {
-    return `quarter past ${hourWord}`;
+    const phrases = [
+      `quarter past ${hourWord}`,
+      `a quarter after ${hourWord}`,
+      `fifteen past ${hourWord}`,
+      `${hourWord} fifteen`,
+    ];
+    return randomPick(phrases);
   }
 
   // Half past
   if (minutes === 30) {
-    return `half past ${hourWord}`;
+    const phrases = [
+      `half past ${hourWord}`,
+      `${hourWord} thirty`,
+      `thirty past ${hourWord}`,
+      `halfway past ${hourWord}`,
+    ];
+    return randomPick(phrases);
   }
 
   // Quarter to
   if (minutes === 45) {
     const nextHourWord = numberWords[getNextHour(hours)];
-    return `quarter to ${nextHourWord}`;
+    const phrases = [
+      `quarter to ${nextHourWord}`,
+      `a quarter before ${nextHourWord}`,
+      `fifteen to ${nextHourWord}`,
+      `${hourWord} forty-five`,
+    ];
+    return randomPick(phrases);
   }
 
   // Minutes past (1-30)
   if (minutes > 0 && minutes < 30) {
     const minuteWord = numberWords[minutes];
     if (minuteWord) {
-      return `${minuteWord} past ${hourWord}`;
+      const phrases = [
+        `${minuteWord} past ${hourWord}`,
+        `${minuteWord} after ${hourWord}`,
+        `${hourWord} ${minuteWord.replace('-', ' ')}`,
+      ];
+      return randomPick(phrases);
     }
-    // For minutes without direct word mapping
     return `${minutes} past ${hourWord}`;
   }
 
@@ -85,7 +120,12 @@ export function timeToWords(time: Time): string {
     const nextHourWord = numberWords[getNextHour(hours)];
     const minuteWord = numberWords[minutesTo];
     if (minuteWord) {
-      return `${minuteWord} to ${nextHourWord}`;
+      const phrases = [
+        `${minuteWord} to ${nextHourWord}`,
+        `${minuteWord} before ${nextHourWord}`,
+        `${minuteWord} until ${nextHourWord}`,
+      ];
+      return randomPick(phrases);
     }
     return `${minutesTo} to ${nextHourWord}`;
   }
