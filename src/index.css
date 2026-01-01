@@ -108,9 +108,21 @@
 .wheel-picker {
   touch-action: pan-y;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
 }
 
 .wheel-picker::-webkit-scrollbar {
+  display: none;
+}
+
+/* Utility to hide scrollbar */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
 

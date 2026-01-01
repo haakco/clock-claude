@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, useCallback } from 'react';
+import { useRef, useEffect, useLayoutEffect, useCallback } from 'react';
 import { useThemeStore } from '../../stores/themeStore';
 import { getTheme } from '../../themes';
 
@@ -20,7 +20,9 @@ export function WheelPicker({
   const theme = useThemeStore((state) => state.theme);
   const colors = getTheme(theme).colors;
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
+  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isRepositioningRef = useRef(false);
+  const isUserScrollingRef = useRef(false);
 
   // Create a tripled list for infinite scroll effect
   const extendedItems = [...items, ...items, ...items];
@@ -29,47 +31,93 @@ export function WheelPicker({
   const currentIndex = items.indexOf(value);
   const targetScrollTop = (currentIndex + middleOffset) * itemHeight;
 
-  // Scroll to the current value on mount and when value changes
-  useEffect(() => {
-    if (containerRef.current && !isDragging) {
+  // Set scroll position before browser paint to avoid visible animation
+  useLayoutEffect(() => {
+    if (containerRef.current && !isUserScrollingRef.current) {
       containerRef.current.scrollTop = targetScrollTop;
     }
-  }, [value, targetScrollTop, isDragging]);
+  }, [value, targetScrollTop]);
 
-  const handleScroll = useCallback(() => {
-    if (!containerRef.current) return;
+  const snapToNearest = useCallback(() => {
+    if (!containerRef.current || isRepositioningRef.current) return;
 
     const scrollTop = containerRef.current.scrollTop;
     const index = Math.round(scrollTop / itemHeight);
-    const actualIndex = index % items.length;
+    const snappedScrollTop = index * itemHeight;
+
+    // Only animate if we need to move
+    if (Math.abs(scrollTop - snappedScrollTop) > 1) {
+      containerRef.current.scrollTo({
+        top: snappedScrollTop,
+        behavior: 'smooth',
+      });
+    }
+
+    isUserScrollingRef.current = false;
+  }, [itemHeight]);
+
+  const handleInfiniteLoop = useCallback(() => {
+    if (!containerRef.current) return;
+
+    const scrollTop = containerRef.current.scrollTop;
+    const totalHeight = items.length * itemHeight;
+
+    // Check if we need to reposition for infinite loop
+    if (scrollTop < totalHeight * 0.5) {
+      isRepositioningRef.current = true;
+      containerRef.current.scrollTop = scrollTop + totalHeight;
+      // Small delay to let the reposition complete before allowing snap
+      requestAnimationFrame(() => {
+        isRepositioningRef.current = false;
+      });
+    } else if (scrollTop > totalHeight * 2.5) {
+      isRepositioningRef.current = true;
+      containerRef.current.scrollTop = scrollTop - totalHeight;
+      requestAnimationFrame(() => {
+        isRepositioningRef.current = false;
+      });
+    }
+  }, [items.length, itemHeight]);
+
+  const handleScroll = useCallback(() => {
+    if (!containerRef.current || isRepositioningRef.current) return;
+
+    const scrollTop = containerRef.current.scrollTop;
+    const index = Math.round(scrollTop / itemHeight);
+    const actualIndex = ((index % items.length) + items.length) % items.length;
     const newValue = items[actualIndex];
 
     if (newValue !== value) {
       onChange(newValue);
     }
 
-    // Reset scroll position for infinite loop effect
-    if (scrollTop < itemHeight * items.length * 0.5) {
-      containerRef.current.scrollTop = scrollTop + items.length * itemHeight;
-    } else if (scrollTop > itemHeight * items.length * 2.5) {
-      containerRef.current.scrollTop = scrollTop - items.length * itemHeight;
+    // Clear existing timeout
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
     }
-  }, [items, itemHeight, value, onChange]);
 
-  const handleScrollEnd = useCallback(() => {
-    if (!containerRef.current) return;
+    // Set new timeout for scroll end detection
+    scrollTimeoutRef.current = setTimeout(() => {
+      handleInfiniteLoop();
+      snapToNearest();
+    }, 100);
+  }, [items, itemHeight, value, onChange, handleInfiniteLoop, snapToNearest]);
 
-    const scrollTop = containerRef.current.scrollTop;
-    const index = Math.round(scrollTop / itemHeight);
-    const snappedScrollTop = index * itemHeight;
+  const handleScrollStart = useCallback(() => {
+    isUserScrollingRef.current = true;
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+  }, []);
 
-    containerRef.current.scrollTo({
-      top: snappedScrollTop,
-      behavior: 'smooth',
-    });
-
-    setIsDragging(false);
-  }, [itemHeight]);
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div
@@ -105,11 +153,8 @@ export function WheelPicker({
           paddingBottom: (height - itemHeight) / 2,
         }}
         onScroll={handleScroll}
-        onTouchStart={() => setIsDragging(true)}
-        onTouchEnd={handleScrollEnd}
-        onMouseDown={() => setIsDragging(true)}
-        onMouseUp={handleScrollEnd}
-        onMouseLeave={() => isDragging && handleScrollEnd()}
+        onTouchStart={handleScrollStart}
+        onMouseDown={handleScrollStart}
       >
         {extendedItems.map((item, index) => {
           const actualIndex = index % items.length;

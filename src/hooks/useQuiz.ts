@@ -50,10 +50,11 @@ export function useQuiz() {
     (userAnswer: Time): boolean => {
       if (!wordProblem) return false;
 
-      // Compare hours and minutes only
+      // Compare hours, minutes, and AM/PM period
       const correct =
         wordProblem.correctTime.hours === userAnswer.hours &&
-        wordProblem.correctTime.minutes === userAnswer.minutes;
+        wordProblem.correctTime.minutes === userAnswer.minutes &&
+        wordProblem.correctTime.period === userAnswer.period;
 
       answerWordProblem(correct);
       return correct;
@@ -75,6 +76,10 @@ export function useQuiz() {
     [generateNewQuizQuestions]
   );
 
+  const refreshWordProblem = useCallback(() => {
+    generateNewWordProblem();
+  }, [generateNewWordProblem]);
+
   return {
     quizQuestions,
     wordProblem,
@@ -85,5 +90,6 @@ export function useQuiz() {
     checkWordProblemAnswer,
     refreshQuestions,
     refreshSingleQuestion,
+    refreshWordProblem,
   };
 }

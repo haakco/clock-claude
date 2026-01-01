@@ -118,7 +118,7 @@ export function WordProblem({ problem, onAnswer, onNext }: WordProblemProps) {
             <TimeInput
               value={userAnswer}
               onChange={setUserAnswer}
-              showPeriod={false}
+              showPeriod
               compact
             />
 
@@ -152,7 +152,8 @@ export function WordProblem({ problem, onAnswer, onNext }: WordProblemProps) {
             ) : (
               <div className="text-red-500 text-xl font-bold mb-4">
                 Not quite! The answer is {problem.correctTime.hours}:
-                {String(problem.correctTime.minutes).padStart(2, '0')}
+                {String(problem.correctTime.minutes).padStart(2, '0')}{' '}
+                {problem.correctTime.period}
               </div>
             )}
 

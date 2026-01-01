@@ -6,7 +6,7 @@ const isSpeechSupported =
   typeof window !== 'undefined' && 'speechSynthesis' in window;
 
 /**
- * Pure function to format time as spoken text.
+ * Pure function to format time as spoken text (12-hour format).
  * Extracted for testability.
  */
 export function formatTimeForSpeech(
@@ -34,6 +34,72 @@ export function formatTimeForSpeech(
   }
 
   return `${timeText} ${period}`;
+}
+
+/**
+ * Pure function to format time as spoken text (24-hour/military format).
+ * E.g., 15:00 → "fifteen hundred", 09:30 → "oh nine thirty"
+ */
+export function formatTime24ForSpeech(
+  hours: number,
+  minutes: number,
+  period: 'AM' | 'PM'
+): string {
+  // Convert 12h to 24h
+  let hour24 = hours;
+  if (period === 'PM' && hours !== 12) hour24 = hours + 12;
+  if (period === 'AM' && hours === 12) hour24 = 0;
+
+  // Format hour word
+  const hourWords: Record<number, string> = {
+    0: 'zero',
+    1: 'oh one',
+    2: 'oh two',
+    3: 'oh three',
+    4: 'oh four',
+    5: 'oh five',
+    6: 'oh six',
+    7: 'oh seven',
+    8: 'oh eight',
+    9: 'oh nine',
+    10: 'ten',
+    11: 'eleven',
+    12: 'twelve',
+    13: 'thirteen',
+    14: 'fourteen',
+    15: 'fifteen',
+    16: 'sixteen',
+    17: 'seventeen',
+    18: 'eighteen',
+    19: 'nineteen',
+    20: 'twenty',
+    21: 'twenty one',
+    22: 'twenty two',
+    23: 'twenty three',
+  };
+
+  const hourWord = hourWords[hour24] || String(hour24);
+
+  if (minutes === 0) {
+    return `${hourWord} hundred hours`;
+  }
+
+  // Format minutes
+  const minuteWords: Record<number, string> = {
+    1: 'oh one',
+    2: 'oh two',
+    3: 'oh three',
+    4: 'oh four',
+    5: 'oh five',
+    6: 'oh six',
+    7: 'oh seven',
+    8: 'oh eight',
+    9: 'oh nine',
+  };
+
+  const minuteWord = minuteWords[minutes] || String(minutes);
+
+  return `${hourWord} ${minuteWord}`;
 }
 
 export function useSpeech() {
@@ -77,5 +143,13 @@ export function useSpeech() {
     [speak]
   );
 
-  return { speak, speakTime };
+  const speakTime24 = useCallback(
+    (hours: number, minutes: number, period: 'AM' | 'PM') => {
+      const timeText = formatTime24ForSpeech(hours, minutes, period);
+      speak(timeText);
+    },
+    [speak]
+  );
+
+  return { speak, speakTime, speakTime24 };
 }

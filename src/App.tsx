@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { AnalogClock } from './components/Clock';
-import { DigitalTime, TimeInput } from './components/DigitalDisplay';
+import { TimeDisplayInput } from './components/DigitalDisplay';
 import { ClockQuiz } from './components/Quiz';
 import { Header } from './components/Layout';
 import { EncouragingMessage } from './components/Feedback';
@@ -57,7 +57,7 @@ function App() {
               <AnalogClock size={300} interactive />
             </div>
 
-            {/* Digital display */}
+            {/* Digital display with integrated input */}
             <motion.div
               className="card"
               style={{ background: colors.clockFace }}
@@ -65,24 +65,32 @@ function App() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
             >
-              <DigitalTime time={time} showWords show24Hour />
+              <TimeDisplayInput time={time} onChange={setFullTime} showWords />
             </motion.div>
 
-            {/* Time input */}
+            {/* Instructions for kids */}
             <motion.div
-              className="card"
-              style={{ background: colors.clockFace }}
+              className="text-center p-5 rounded-2xl"
+              style={{ background: `${colors.primary}10` }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
             >
-              <h3
-                className="text-lg font-bold mb-3 text-center"
+              <h2
+                className="text-lg font-bold mb-2"
                 style={{ color: colors.secondary }}
               >
-                Set the time
-              </h3>
-              <TimeInput value={time} onChange={setFullTime} />
+                How to Play
+              </h2>
+              <div
+                className="text-base space-y-1"
+                style={{ color: colors.secondary }}
+              >
+                <p>👆 Drag the clock hands to change the time</p>
+                <p>🎯 Look at the small clocks and enter the time shown</p>
+                <p>📝 Read the word puzzles and enter the matching time</p>
+                <p>⭐ Get points for each correct answer!</p>
+              </div>
             </motion.div>
           </motion.div>
 
@@ -95,31 +103,6 @@ function App() {
             <ClockQuiz />
           </motion.div>
         </div>
-
-        {/* Instructions for kids */}
-        <motion.div
-          className="mt-8 text-center p-6 rounded-2xl"
-          style={{ background: `${colors.primary}10` }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-        >
-          <h2
-            className="text-xl font-bold mb-2"
-            style={{ color: colors.secondary }}
-          >
-            How to Play
-          </h2>
-          <div
-            className="text-lg space-y-1"
-            style={{ color: colors.secondary }}
-          >
-            <p>👆 Drag the clock hands to change the time</p>
-            <p>🎯 Look at the small clocks and enter the time shown</p>
-            <p>📝 Read the word puzzles and enter the matching time</p>
-            <p>⭐ Get points for each correct answer!</p>
-          </div>
-        </motion.div>
       </main>
 
       {/* Footer */}

@@ -18,6 +18,7 @@ export function ClockQuiz() {
     checkWordProblemAnswer,
     refreshQuestions,
     refreshSingleQuestion,
+    refreshWordProblem,
   } = useQuiz();
 
   const handleRefresh = () => {
@@ -67,7 +68,7 @@ export function ClockQuiz() {
         <WordProblem
           problem={wordProblem}
           onAnswer={checkWordProblemAnswer}
-          onNext={refreshQuestions}
+          onNext={refreshWordProblem}
         />
       )}
     </div>

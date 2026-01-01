@@ -53,9 +53,10 @@ const createQuizQuestion = (difficulty: Difficulty): QuizQuestion => {
 
 const createWordProblem = (difficulty: Difficulty): WordProblem => {
   const time = generateQuizTime(difficulty);
+  // Include period phrases like "in the afternoon" for more natural questions
   return {
     id: crypto.randomUUID(),
-    timeInWords: timeToWords(time),
+    timeInWords: timeToWords(time, true),
     correctTime: time,
     answered: false,
     correct: null,

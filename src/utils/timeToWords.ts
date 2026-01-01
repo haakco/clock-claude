@@ -49,11 +49,28 @@ function randomPick<T>(arr: T[]): T {
 }
 
 /**
+ * Get period phrase based on time of day
+ */
+function getPeriodPhrase(hours: number, period: 'AM' | 'PM'): string {
+  if (period === 'AM') {
+    if (hours === 12) return 'at midnight';
+    if (hours < 6) return 'at night';
+    return 'in the morning';
+  } else {
+    if (hours === 12) return 'at noon';
+    if (hours < 6) return 'in the afternoon';
+    if (hours < 9) return 'in the evening';
+    return 'at night';
+  }
+}
+
+/**
  * Convert a time to English words with random variety
  */
-export function timeToWords(time: Time): string {
-  const { hours, minutes } = time;
+export function timeToWords(time: Time, includePeriod = false): string {
+  const { hours, minutes, period } = time;
   const hourWord = numberWords[hours];
+  const periodPhrase = includePeriod ? ` ${getPeriodPhrase(hours, period)}` : '';
 
   // On the hour
   if (minutes === 0) {
@@ -63,7 +80,7 @@ export function timeToWords(time: Time): string {
       `${hourWord} on the dot`,
       `precisely ${hourWord} o'clock`,
     ];
-    return randomPick(phrases);
+    return randomPick(phrases) + periodPhrase;
   }
 
   // Quarter past
@@ -74,7 +91,7 @@ export function timeToWords(time: Time): string {
       `fifteen past ${hourWord}`,
       `${hourWord} fifteen`,
     ];
-    return randomPick(phrases);
+    return randomPick(phrases) + periodPhrase;
   }
 
   // Half past
@@ -85,7 +102,7 @@ export function timeToWords(time: Time): string {
       `thirty past ${hourWord}`,
       `halfway past ${hourWord}`,
     ];
-    return randomPick(phrases);
+    return randomPick(phrases) + periodPhrase;
   }
 
   // Quarter to
@@ -97,7 +114,7 @@ export function timeToWords(time: Time): string {
       `fifteen to ${nextHourWord}`,
       `${hourWord} forty-five`,
     ];
-    return randomPick(phrases);
+    return randomPick(phrases) + periodPhrase;
   }
 
   // Minutes past (1-30)
@@ -109,9 +126,9 @@ export function timeToWords(time: Time): string {
         `${minuteWord} after ${hourWord}`,
         `${hourWord} ${minuteWord.replace('-', ' ')}`,
       ];
-      return randomPick(phrases);
+      return randomPick(phrases) + periodPhrase;
     }
-    return `${minutes} past ${hourWord}`;
+    return `${minutes} past ${hourWord}` + periodPhrase;
   }
 
   // Minutes to (31-59)
@@ -125,12 +142,12 @@ export function timeToWords(time: Time): string {
         `${minuteWord} before ${nextHourWord}`,
         `${minuteWord} until ${nextHourWord}`,
       ];
-      return randomPick(phrases);
+      return randomPick(phrases) + periodPhrase;
     }
-    return `${minutesTo} to ${nextHourWord}`;
+    return `${minutesTo} to ${nextHourWord}` + periodPhrase;
   }
 
-  return `${hourWord} ${minutes.toString().padStart(2, '0')}`;
+  return `${hourWord} ${minutes.toString().padStart(2, '0')}` + periodPhrase;
 }
 
 /**
