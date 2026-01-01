@@ -1,38 +1,96 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@layer base {
-  html {
-    font-family: 'Nunito', 'Arial Rounded MT Bold', sans-serif;
+/* Tailwind v4 theme configuration */
+@theme {
+  /* Blue theme colors */
+  --color-theme-blue-50: #eff6ff;
+  --color-theme-blue-100: #dbeafe;
+  --color-theme-blue-200: #bfdbfe;
+  --color-theme-blue-300: #93c5fd;
+  --color-theme-blue-400: #60a5fa;
+  --color-theme-blue-500: #3b82f6;
+  --color-theme-blue-600: #2563eb;
+  --color-theme-blue-700: #1d4ed8;
+  --color-theme-blue-800: #1e40af;
+  --color-theme-blue-900: #1e3a8a;
+
+  /* Pink theme colors */
+  --color-theme-pink-50: #fdf2f8;
+  --color-theme-pink-100: #fce7f3;
+  --color-theme-pink-200: #fbcfe8;
+  --color-theme-pink-300: #f9a8d4;
+  --color-theme-pink-400: #f472b6;
+  --color-theme-pink-500: #ec4899;
+  --color-theme-pink-600: #db2777;
+  --color-theme-pink-700: #be185d;
+  --color-theme-pink-800: #9d174d;
+  --color-theme-pink-900: #831843;
+
+  /* Custom fonts */
+  --font-display: 'Fredoka', 'Comic Sans MS', cursive;
+  --font-body: 'Nunito', 'Arial Rounded MT Bold', sans-serif;
+
+  /* Custom animations */
+  --animate-bounce-slow: bounce 2s infinite;
+  --animate-wiggle: wiggle 0.5s ease-in-out;
+  --animate-pulse-glow: pulse-glow 2s ease-in-out infinite;
+
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
   }
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: 'Fredoka', 'Comic Sans MS', cursive;
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px 5px rgba(59, 130, 246, 0.3); }
+    50% { box-shadow: 0 0 30px 10px rgba(59, 130, 246, 0.5); }
   }
 }
 
+/* Base styles */
+@layer base {
+  html {
+    font-family: var(--font-body);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+  }
+}
+
+/* Component classes */
 @layer components {
   .btn-primary {
-    @apply px-6 py-3 rounded-full font-bold text-white
-           transition-all duration-200 transform hover:scale-105
-           active:scale-95 shadow-lg;
+    padding: 0.75rem 1.5rem;
+    border-radius: 9999px;
+    font-weight: 700;
+    color: white;
+    transition: all 0.2s;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  }
+
+  .btn-primary:hover {
+    transform: scale(1.05);
+  }
+
+  .btn-primary:active {
+    transform: scale(0.95);
   }
 
   .card {
-    @apply bg-white rounded-3xl shadow-xl p-6;
+    background-color: white;
+    border-radius: 1.5rem;
+    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+    padding: 1.5rem;
   }
 
   .clock-container {
-    @apply relative rounded-full shadow-2xl;
+    position: relative;
+    border-radius: 9999px;
+    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
   }
 }
 
+/* Custom utilities */
 @layer utilities {
   .text-shadow {
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
