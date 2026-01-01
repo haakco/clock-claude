@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect, useRef } from 'react';
+import { useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Volume2 } from 'lucide-react';
 import { Time } from '../../types';
@@ -23,22 +23,11 @@ export function DigitalTime({
   const colors = getTheme(theme).colors;
   const { speakTime } = useSpeech();
 
-  // Display time only updates when crossing 5-minute boundaries
-  const [displayTime, setDisplayTime] = useState<Time>(time);
-  const lastRoundedMinute = useRef(Math.floor(time.minutes / 5) * 5);
-
-  useEffect(() => {
+  // Display time rounds to 5-minute boundaries
+  const displayTime = useMemo((): Time => {
     const roundedMinute = Math.floor(time.minutes / 5) * 5;
-    const hourChanged = time.hours !== displayTime.hours;
-    const periodChanged = time.period !== displayTime.period;
-    const fiveMinBoundaryChanged = roundedMinute !== lastRoundedMinute.current;
-
-    // Update display when crossing 5-minute boundaries or hour/period changes
-    if (hourChanged || periodChanged || fiveMinBoundaryChanged) {
-      setDisplayTime({ ...time, minutes: roundedMinute });
-      lastRoundedMinute.current = roundedMinute;
-    }
-  }, [time, displayTime.hours, displayTime.period]);
+    return { hours: time.hours, minutes: roundedMinute, period: time.period };
+  }, [time.hours, time.minutes, time.period]);
 
   const time12 = formatTime12(displayTime);
   const time24 = formatTime24(displayTime);
