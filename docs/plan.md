@@ -2,6 +2,8 @@
 
 A web-based interactive clock game designed to help children aged 6-8 learn to tell time.
 
+![Clock Learning Game Screenshot](screenshot.png)
+
 ## Table of Contents
 
 - [Learning Objectives](#learning-objectives)
@@ -60,7 +62,8 @@ A web-based interactive clock game designed to help children aged 6-8 learn to t
 | **Sound Effects** | Howler.js | Easy audio playback |
 | **Confetti** | canvas-confetti | Celebration effects |
 | **Icons** | Lucide React | Clean, customizable icons |
-| **Wheel Picker** | react-mobile-picker | Apple-style scroll wheel input |
+| **Wheel Picker** | Custom component | Apple-style scroll wheel input |
+| **Text-to-Speech** | Web Speech API | Native browser speech synthesis |
 | **Deployment** | GitHub Pages | Free, easy CI/CD integration |
 
 ---
@@ -172,12 +175,12 @@ A web-based interactive clock game designed to help children aged 6-8 learn to t
 
 | Level | Description | Times Included |
 |-------|-------------|----------------|
-| **Easy** | O'clock times only | 1:00, 2:00, 3:00, etc. |
-| **Medium** | O'clock + half past + quarters | X:00, X:15, X:30, X:45 |
-| **Hard** | Any 5-minute increment | X:00, X:05, X:10, X:15, etc. |
+| **⭐ Easy** | O'clock times only | 1:00, 2:00, 3:00, etc. |
+| **⭐ Learning** | O'clock + half past + quarters | X:00, X:15, X:30, X:45 |
+| **⭐ Expert** | Any 5-minute increment | X:00, X:05, X:10, X:15, etc. |
 
-- Default: **Medium** (appropriate for 6-8 age range)
-- Difficulty selector with kid-friendly labels (e.g., "Beginner", "Learning", "Expert")
+- Default: **Learning** (appropriate for 6-8 age range)
+- Kid-friendly labels with star icons in the UI
 
 ### 7. Theme Toggle
 
@@ -205,7 +208,7 @@ A web-based interactive clock game designed to help children aged 6-8 learn to t
   - Rainbows
 - **Accent colors**: Purple, magenta, coral
 
-### 8. Sound Effects
+### 8. Sound Effects & Speech
 
 | Event | Sound |
 |-------|-------|
@@ -214,6 +217,12 @@ A web-based interactive clock game designed to help children aged 6-8 learn to t
 | Incorrect answer | Gentle encouraging tone |
 | Button clicks | Soft pop |
 | New questions | Whoosh |
+
+**Text-to-Speech Features:**
+- Speaker buttons next to time displays
+- Reads current time aloud in natural language
+- Reads word problems aloud for accessibility
+- Uses Web Speech API (no external dependencies)
 
 - **Mute button**: Clearly visible for quiet play
 - **Default**: Sounds ON (engaging for kids)
@@ -281,43 +290,50 @@ clock-game/
 │       ├── ci.yml              # Test on PR/push
 │       └── deploy.yml          # Build & deploy to GitHub Pages
 ├── docs/
-│   └── plan.md                 # This document
+│   ├── plan.md                 # This document
+│   └── screenshot.png          # App screenshot
 ├── src/
 │   ├── components/
 │   │   ├── Clock/
 │   │   │   ├── AnalogClock.tsx      # Main interactive clock
 │   │   │   ├── ClockHand.tsx        # Draggable hand component
 │   │   │   ├── ClockFace.tsx        # Clock face with numbers
-│   │   │   └── MiniClock.tsx        # Small quiz clock
+│   │   │   ├── MiniClock.tsx        # Small quiz clock
+│   │   │   └── index.ts             # Barrel export
 │   │   ├── DigitalDisplay/
-│   │   │   ├── DigitalTime.tsx      # Time display
-│   │   │   ├── WheelPicker.tsx      # Apple-style picker
-│   │   │   └── TimeInput.tsx        # Combined time input
+│   │   │   ├── DigitalTime.tsx      # Time display with speech
+│   │   │   ├── WheelPicker.tsx      # Custom Apple-style picker
+│   │   │   ├── TimeInput.tsx        # Combined time input
+│   │   │   ├── TimeDisplayInput.tsx # Display with edit capability
+│   │   │   └── index.ts             # Barrel export
 │   │   ├── Quiz/
 │   │   │   ├── ClockQuiz.tsx        # Quiz section container
 │   │   │   ├── WordProblem.tsx      # Word challenge component
-│   │   │   └── QuizCard.tsx         # Individual quiz card
+│   │   │   ├── QuizCard.tsx         # Individual quiz card
+│   │   │   └── index.ts             # Barrel export
 │   │   ├── Layout/
-│   │   │   ├── Header.tsx           # App header
+│   │   │   ├── Header.tsx           # App header with controls
 │   │   │   ├── ThemeToggle.tsx      # Blue/Pink toggle
 │   │   │   ├── ScoreDisplay.tsx     # Points display
-│   │   │   └── DifficultySelector.tsx
+│   │   │   ├── DifficultySelector.tsx
+│   │   │   └── index.ts             # Barrel export
 │   │   ├── Feedback/
-│   │   │   ├── CorrectAnimation.tsx # Celebration effects
-│   │   │   ├── IncorrectAnimation.tsx
-│   │   │   └── EncouragingMessage.tsx
+│   │   │   ├── EncouragingMessage.tsx # Feedback messages
+│   │   │   └── index.ts             # Barrel export
 │   │   └── Decorations/
 │   │       ├── BlueThemeDecorations.tsx
-│   │       └── PinkThemeDecorations.tsx
+│   │       ├── PinkThemeDecorations.tsx
+│   │       ├── CustomIcons.tsx      # Theme-specific icons
+│   │       └── index.ts             # Barrel export
 │   ├── hooks/
 │   │   ├── useClockDrag.ts          # Clock hand dragging logic
 │   │   ├── useQuiz.ts               # Quiz state management
 │   │   ├── useSound.ts              # Sound effect handling
+│   │   ├── useSpeech.ts             # Text-to-speech hook
 │   │   └── useTime.ts               # Time state and conversions
 │   ├── utils/
 │   │   ├── timeConversion.ts        # Angle ↔ time conversions
 │   │   ├── timeToWords.ts           # Convert time to English
-│   │   ├── wordsToTime.ts           # Parse English to time
 │   │   └── generateQuizTime.ts      # Random time generation
 │   ├── stores/
 │   │   ├── gameStore.ts             # Score, difficulty state
@@ -326,23 +342,18 @@ clock-game/
 │   │   ├── blue.ts                  # Blue theme config
 │   │   ├── pink.ts                  # Pink theme config
 │   │   └── index.ts                 # Theme provider
-│   ├── assets/
-│   │   ├── sounds/                  # Sound effect files
-│   │   └── decorations/             # SVG/image decorations
 │   ├── types/
 │   │   └── index.ts                 # TypeScript types
 │   ├── App.tsx                      # Main app component
 │   ├── main.tsx                     # Entry point
 │   └── index.css                    # Global styles + Tailwind
 ├── tests/
-│   ├── unit/                        # Unit tests
-│   ├── components/                  # Component tests
 │   └── e2e/                         # Playwright E2E tests
 ├── public/
-│   └── favicon.ico
+│   ├── clock-icon.svg              # App icon
+│   └── CNAME                       # Custom domain config
 ├── package.json
 ├── vite.config.ts
-├── tailwind.config.js
 ├── tsconfig.json
 ├── playwright.config.ts
 ├── TODO.md                          # Task tracking

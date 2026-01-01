@@ -2,6 +2,8 @@
 
 An interactive web-based game to help children aged 6-8 learn to tell time.
 
+![Clock Learning Game Screenshot](docs/screenshot.png)
+
 ## Overview
 
 This educational game features:
@@ -9,10 +11,12 @@ This educational game features:
 - **Interactive analog clock** with draggable hour and minute hands
 - **Digital time display** in both 12-hour and 24-hour formats
 - **Time in words** showing English expressions like "half past three"
+- **Text-to-speech** - hear the time spoken aloud
 - **Quiz mode** with small clocks to test time-reading skills
 - **Word problems** to practice understanding time expressions
 - **Fun themes** - choose between Blue and Pink designs
 - **Sound effects** and celebrations for correct answers
+- **Difficulty levels** - Easy, Learning (Medium), and Expert
 
 ## Documentation
 
@@ -58,9 +62,9 @@ npm run build
 
 | Level | Times Included |
 |-------|----------------|
-| Easy | O'clock (3:00, 7:00) |
-| Medium | O'clock, half past, quarters (3:00, 3:15, 3:30, 3:45) |
-| Hard | All 5-minute increments |
+| ⭐ Easy | O'clock times only (3:00, 7:00) |
+| ⭐ Learning | O'clock, half past, quarters (3:00, 3:15, 3:30, 3:45) |
+| ⭐ Expert | All 5-minute increments |
 
 ### Themes
 
@@ -97,16 +101,16 @@ npm run format       # Format with Prettier
 ```
 src/
 ├── components/      # React components
-│   ├── Clock/       # Analog clock components
-│   ├── DigitalDisplay/  # Digital time and inputs
-│   ├── Quiz/        # Quiz and word problems
-│   ├── Layout/      # Header, theme toggle, etc.
-│   └── Feedback/    # Animations and messages
-├── hooks/           # Custom React hooks
-├── utils/           # Utility functions
-├── stores/          # Zustand state stores
-├── themes/          # Theme configurations
-└── assets/          # Sounds and decorations
+│   ├── Clock/       # Analog clock (AnalogClock, MiniClock, ClockHand, ClockFace)
+│   ├── DigitalDisplay/  # Digital time and wheel picker inputs
+│   ├── Quiz/        # Clock quiz and word problems
+│   ├── Layout/      # Header, theme toggle, score display, difficulty selector
+│   ├── Feedback/    # Encouraging messages and animations
+│   └── Decorations/ # Theme-specific decorations (rockets, butterflies, etc.)
+├── hooks/           # Custom React hooks (useClockDrag, useQuiz, useSound, useSpeech, useTime)
+├── utils/           # Utility functions (timeConversion, timeToWords, generateQuizTime)
+├── stores/          # Zustand state stores (gameStore, themeStore)
+└── themes/          # Theme configurations (blue, pink)
 ```
 
 ## Contributing
