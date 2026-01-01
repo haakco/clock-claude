@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { Howl } from 'howler';
 import { useGameStore } from '../stores/gameStore';
 
-type SoundType = 'tick' | 'correct' | 'incorrect' | 'click';
+type SoundType = 'tick' | 'correct' | 'incorrect' | 'click' | 'whoosh';
 
 // We'll use simple oscillator-based sounds instead of audio files
 // This avoids needing to bundle audio files
@@ -25,6 +24,11 @@ export function useSound() {
     return () => {
       window.removeEventListener('click', initAudio);
       window.removeEventListener('touchstart', initAudio);
+      // Clean up AudioContext to prevent memory leaks
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+        audioContextRef.current = null;
+      }
     };
   }, []);
 
@@ -76,30 +80,15 @@ export function useSound() {
         case 'click':
           playTone(600, 0.05, 'sine');
           break;
+        case 'whoosh':
+          // Descending sweep for new questions
+          playTone(600, 0.08, 'sine');
+          setTimeout(() => playTone(450, 0.08, 'sine'), 40);
+          setTimeout(() => playTone(300, 0.12, 'sine'), 80);
+          break;
       }
     },
     [soundEnabled, playTone]
-  );
-
-  return { playSound };
-}
-
-// Placeholder for future Howler.js implementation with actual audio files
-export function useSoundWithFiles() {
-  const soundEnabled = useGameStore((state) => state.soundEnabled);
-  const sounds = useRef<Record<SoundType, Howl | null>>({
-    tick: null,
-    correct: null,
-    incorrect: null,
-    click: null,
-  });
-
-  const playSound = useCallback(
-    (type: SoundType) => {
-      if (!soundEnabled || !sounds.current[type]) return;
-      sounds.current[type]?.play();
-    },
-    [soundEnabled]
   );
 
   return { playSound };

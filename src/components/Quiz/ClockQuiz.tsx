@@ -4,10 +4,12 @@ import { WordProblem } from './WordProblem';
 import { useQuiz } from '../../hooks/useQuiz';
 import { useThemeStore } from '../../stores/themeStore';
 import { getTheme } from '../../themes';
+import { useSound } from '../../hooks/useSound';
 
 export function ClockQuiz() {
   const theme = useThemeStore((state) => state.theme);
   const colors = getTheme(theme).colors;
+  const { playSound } = useSound();
 
   const {
     quizQuestions,
@@ -18,6 +20,11 @@ export function ClockQuiz() {
     refreshSingleQuestion,
   } = useQuiz();
 
+  const handleRefresh = () => {
+    playSound('whoosh');
+    refreshQuestions();
+  };
+
   return (
     <div className="space-y-6">
       {/* Score and refresh */}
@@ -27,7 +34,7 @@ export function ClockQuiz() {
           style={{ background: colors.secondary }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          onClick={refreshQuestions}
+          onClick={handleRefresh}
         >
           <span>🔄</span>
           New Questions

@@ -3,13 +3,13 @@ import { useGameStore } from '../../stores/gameStore';
 import { Difficulty } from '../../types';
 
 const difficultyLabels: Record<Difficulty, string> = {
-  easy: 'Easy',
-  medium: 'Medium',
-  hard: 'Hard',
+  easy: 'Beginner',
+  medium: 'Learning',
+  hard: 'Expert',
 };
 
 const difficultyEmojis: Record<Difficulty, string> = {
-  easy: '🌟',
+  easy: '🌱',
   medium: '⭐',
   hard: '🏆',
 };

@@ -158,10 +158,42 @@ Current: Animations are inline in `QuizCard.tsx` and `MiniClock.tsx`
 
 ---
 
+## 6. Code Review Checkpoint
+
+After each batch of changes, perform code review to ensure:
+
+### Quality Criteria
+- [ ] **No god functions/classes** - Functions should do one thing well
+- [ ] **Functional patterns** - Prefer pure functions, composition over inheritance
+- [ ] **Small, focused components** - Each component has single responsibility
+- [ ] **Proper separation of concerns** - Hooks for logic, components for UI
+- [ ] **Type safety** - Proper TypeScript types, no `any`
+- [ ] **Test coverage** - New functionality has corresponding tests
+
+### Review Checklist
+1. Review new hooks for:
+   - Single responsibility
+   - Proper memoization (useCallback, useMemo where needed)
+   - No side effects leaking
+
+2. Review components for:
+   - Props interface clarity
+   - No business logic in render
+   - Proper event handler naming
+
+3. Add missing tests for:
+   - New utility functions
+   - New hooks (if testable in isolation)
+   - Component behavior changes
+
+---
+
 ## Next Steps
 
 1. Implement text-to-speech feature (`useSpeech` hook + UI buttons)
 2. Add whoosh sound to `useSound.ts`
-3. Find/create SVG icons for missing decorations
-4. Update decoration components
+3. **Code review checkpoint** - Review new code, add tests
+4. Find/create SVG icons for missing decorations
+5. Update decoration components
+6. **Final code review** - Ensure all changes are clean
 

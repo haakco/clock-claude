@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
+import { Volume2 } from 'lucide-react';
 import { TimeInput } from '../DigitalDisplay/TimeInput';
 import { WordProblem as WordProblemType, Time } from '../../types';
 import { useThemeStore } from '../../stores/themeStore';
 import { getTheme } from '../../themes';
 import { useSound } from '../../hooks/useSound';
+import { useSpeech } from '../../hooks/useSpeech';
 
 interface WordProblemProps {
   problem: WordProblemType;
@@ -17,6 +19,11 @@ export function WordProblem({ problem, onAnswer, onNext }: WordProblemProps) {
   const theme = useThemeStore((state) => state.theme);
   const colors = getTheme(theme).colors;
   const { playSound } = useSound();
+  const { speak } = useSpeech();
+
+  const handleSpeakQuestion = useCallback(() => {
+    speak(`What time is ${problem.timeInWords}?`);
+  }, [speak, problem.timeInWords]);
 
   const [userAnswer, setUserAnswer] = useState<Time>({
     hours: 12,
@@ -45,6 +52,7 @@ export function WordProblem({ problem, onAnswer, onNext }: WordProblemProps) {
   };
 
   const handleNext = () => {
+    playSound('whoosh');
     setShowResult(false);
     setUserAnswer({ hours: 12, minutes: 0, period: 'AM' });
     onNext();
@@ -72,14 +80,26 @@ export function WordProblem({ problem, onAnswer, onNext }: WordProblemProps) {
         initial={{ scale: 0.9 }}
         animate={{ scale: 1 }}
       >
+        <div className="flex items-center justify-center gap-2 mb-2">
+          <p
+            className="text-lg font-medium"
+            style={{ color: colors.secondary }}
+          >
+            What time is
+          </p>
+          <motion.button
+            className="p-1.5 rounded-full"
+            style={{ background: `${colors.primary}30` }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={handleSpeakQuestion}
+            title="Listen to the question"
+          >
+            <Volume2 size={18} style={{ color: colors.primary }} />
+          </motion.button>
+        </div>
         <p
-          className="text-lg font-medium"
-          style={{ color: colors.secondary }}
-        >
-          What time is
-        </p>
-        <p
-          className="text-2xl font-bold mt-2"
+          className="text-2xl font-bold"
           style={{ color: colors.primary }}
         >
           "{problem.timeInWords}"?
