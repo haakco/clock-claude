@@ -1,12 +1,12 @@
-import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ClockFace } from './ClockFace';
-import { ClockHand } from './ClockHand';
-import { useThemeStore } from '../../stores/themeStore';
-import { useGameStore } from '../../stores/gameStore';
-import { getTheme } from '../../themes';
+import { useEffect } from 'react';
 import { useClockDrag } from '../../hooks/useClockDrag';
 import { useTime } from '../../hooks/useTime';
+import { useGameStore } from '../../stores/gameStore';
+import { useThemeStore } from '../../stores/themeStore';
+import { getTheme } from '../../themes';
+import { ClockFace } from './ClockFace';
+import { ClockHand } from './ClockHand';
 
 interface AnalogClockProps {
   size?: number;
@@ -31,17 +31,12 @@ export function AnalogClock({ size = 300, interactive = true }: AnalogClockProps
     setHours(hours);
   };
 
-  const {
-    isDraggingMinute,
-    isDraggingHour,
-    handleMinuteStart,
-    handleHourStart,
-    clockRef,
-  } = useClockDrag({
-    onMinuteChange: handleMinuteChange,
-    onHourChange: handleHourChange,
-    snapToFive: false,
-  });
+  const { isDraggingMinute, isDraggingHour, handleMinuteStart, handleHourStart, clockRef } =
+    useClockDrag({
+      onMinuteChange: handleMinuteChange,
+      onHourChange: handleHourChange,
+      snapToFive: false,
+    });
 
   // Sync dragging state to game store for text display
   useEffect(() => {
@@ -64,12 +59,7 @@ export function AnalogClock({ size = 300, interactive = true }: AnalogClockProps
     >
       <ClockFace size={size} />
 
-      <svg
-        width={size}
-        height={size}
-        className="absolute top-0 left-0"
-        style={{ zIndex: 10 }}
-      >
+      <svg width={size} height={size} className="absolute top-0 left-0" style={{ zIndex: 10 }}>
         {/* Hour hand (behind minute hand) */}
         <ClockHand
           angle={hourAngle}

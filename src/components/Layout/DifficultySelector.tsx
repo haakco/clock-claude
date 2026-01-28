@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useGameStore } from '../../stores/gameStore';
-import { Difficulty } from '../../types';
+import type { Difficulty } from '../../types';
 
 const difficultyLabels: Record<Difficulty, string> = {
   easy: 'Beginner',

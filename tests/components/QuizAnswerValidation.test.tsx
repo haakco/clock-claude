@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 import { QuizCard } from '../../src/components/Quiz/QuizCard';
+import type { QuizQuestion, Time } from '../../src/types';
 import { timesEqual } from '../../src/utils/timeConversion';
-import { QuizQuestion, Time } from '../../src/types';
 
 // Mock framer-motion
 vi.mock('framer-motion', () => ({
@@ -10,11 +10,7 @@ vi.mock('framer-motion', () => ({
     div: ({ children, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
       <div {...props}>{children}</div>
     ),
-    button: ({
-      children,
-      onClick,
-      ...props
-    }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+    button: ({ children, onClick, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
       <button onClick={onClick} {...props}>
         {children}
       </button>
@@ -61,7 +57,7 @@ describe('Quiz Answer Validation', () => {
       expect(timesEqual(time1, time2)).toBe(false);
     });
 
-    it('validates o\'clock times correctly', () => {
+    it("validates o'clock times correctly", () => {
       const time1: Time = { hours: 12, minutes: 0, period: 'PM' };
       const time2: Time = { hours: 12, minutes: 0, period: 'PM' };
       expect(timesEqual(time1, time2)).toBe(true);
@@ -99,11 +95,7 @@ describe('Quiz Answer Validation', () => {
   });
 
   describe('QuizCard answer validation', () => {
-    const createQuestion = (
-      hours: number,
-      minutes: number,
-      period: 'AM' | 'PM'
-    ): QuizQuestion => ({
+    const createQuestion = (hours: number, minutes: number, period: 'AM' | 'PM'): QuizQuestion => ({
       id: 'test-question-1',
       time: { hours, minutes, period },
       answered: false,
@@ -205,10 +197,7 @@ describe('Quiz Answer Validation', () => {
   describe('edge cases', () => {
     it('validates 1:00 correctly', () => {
       expect(
-        timesEqual(
-          { hours: 1, minutes: 0, period: 'PM' },
-          { hours: 1, minutes: 0, period: 'PM' }
-        )
+        timesEqual({ hours: 1, minutes: 0, period: 'PM' }, { hours: 1, minutes: 0, period: 'PM' })
       ).toBe(true);
     });
 
@@ -223,10 +212,7 @@ describe('Quiz Answer Validation', () => {
 
     it('validates single-digit minutes', () => {
       expect(
-        timesEqual(
-          { hours: 7, minutes: 5, period: 'AM' },
-          { hours: 7, minutes: 5, period: 'AM' }
-        )
+        timesEqual({ hours: 7, minutes: 5, period: 'AM' }, { hours: 7, minutes: 5, period: 'AM' })
       ).toBe(true);
     });
 

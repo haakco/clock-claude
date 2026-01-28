@@ -1,4 +1,4 @@
-import { Time, Time24 } from '../types';
+import type { Time, Time24 } from '../types';
 
 /**
  * Convert 12-hour time to 24-hour time

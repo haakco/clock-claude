@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { timeToWords, wordsToTime } from '../../src/utils/timeToWords';
 
 describe('timeToWords', () => {
@@ -100,31 +100,19 @@ describe('timeToWords', () => {
 
   describe('minutes past', () => {
     it('converts 3:05 to one of the valid phrases', () => {
-      const validPhrases = [
-        'five past three',
-        'five after three',
-        'three five',
-      ];
+      const validPhrases = ['five past three', 'five after three', 'three five'];
       const result = timeToWords({ hours: 3, minutes: 5, period: 'PM' });
       expect(validPhrases).toContain(result);
     });
 
     it('converts 3:10 to one of the valid phrases', () => {
-      const validPhrases = [
-        'ten past three',
-        'ten after three',
-        'three ten',
-      ];
+      const validPhrases = ['ten past three', 'ten after three', 'three ten'];
       const result = timeToWords({ hours: 3, minutes: 10, period: 'PM' });
       expect(validPhrases).toContain(result);
     });
 
     it('converts 3:20 to one of the valid phrases', () => {
-      const validPhrases = [
-        'twenty past three',
-        'twenty after three',
-        'three twenty',
-      ];
+      const validPhrases = ['twenty past three', 'twenty after three', 'three twenty'];
       const result = timeToWords({ hours: 3, minutes: 20, period: 'PM' });
       expect(validPhrases).toContain(result);
     });
@@ -142,31 +130,19 @@ describe('timeToWords', () => {
 
   describe('minutes to', () => {
     it('converts 3:55 to one of the valid phrases', () => {
-      const validPhrases = [
-        'five to four',
-        'five before four',
-        'five until four',
-      ];
+      const validPhrases = ['five to four', 'five before four', 'five until four'];
       const result = timeToWords({ hours: 3, minutes: 55, period: 'PM' });
       expect(validPhrases).toContain(result);
     });
 
     it('converts 3:50 to one of the valid phrases', () => {
-      const validPhrases = [
-        'ten to four',
-        'ten before four',
-        'ten until four',
-      ];
+      const validPhrases = ['ten to four', 'ten before four', 'ten until four'];
       const result = timeToWords({ hours: 3, minutes: 50, period: 'PM' });
       expect(validPhrases).toContain(result);
     });
 
     it('converts 3:40 to one of the valid phrases', () => {
-      const validPhrases = [
-        'twenty to four',
-        'twenty before four',
-        'twenty until four',
-      ];
+      const validPhrases = ['twenty to four', 'twenty before four', 'twenty until four'];
       const result = timeToWords({ hours: 3, minutes: 40, period: 'PM' });
       expect(validPhrases).toContain(result);
     });

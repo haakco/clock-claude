@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('Clock Learning Game', () => {
   test.beforeEach(async ({ page }) => {
@@ -139,9 +139,6 @@ test.describe('Clock Hand Dragging', () => {
       const centerX = boundingBox.x + boundingBox.width / 2;
       const centerY = boundingBox.y + boundingBox.height / 2;
 
-      // Record initial time display
-      const initialTime = await page.getByText(/\d{1,2}:\d{2}\s+(AM|PM)/).first().textContent();
-
       // Simulate dragging the minute hand (drag from center to right, which is 3 o'clock position)
       await page.mouse.move(centerX, centerY);
       await page.mouse.down();
@@ -227,9 +224,6 @@ test.describe('Digital-to-Analog Sync', () => {
     const firstWheel = wheelPickers.first();
 
     if (await firstWheel.isVisible()) {
-      // Get initial time display
-      const initialTime = await page.getByText(/\d{1,2}:\d{2}\s+(AM|PM)/).first().textContent();
-
       // Scroll the wheel picker
       await firstWheel.evaluate((el) => {
         el.scrollTop += 40; // Scroll down one item
@@ -247,7 +241,9 @@ test.describe('Digital-to-Analog Sync', () => {
   test('time in words updates with time changes', async ({ page }) => {
     // Check that a time-in-words display exists
     // Common patterns: "o'clock", "half past", "quarter past", "quarter to"
-    const timeInWords = page.getByText(/(o'clock|half past|quarter past|quarter to|minutes? past|minutes? to)/i);
+    const timeInWords = page.getByText(
+      /(o'clock|half past|quarter past|quarter to|minutes? past|minutes? to)/i
+    );
 
     // At least one time-in-words display should be visible
     await expect(timeInWords.first()).toBeVisible();
@@ -255,7 +251,10 @@ test.describe('Digital-to-Analog Sync', () => {
 
   test('analog clock and digital display show matching times', async ({ page }) => {
     // Get the digital time display
-    const digitalTime = await page.getByText(/(\d{1,2}):(\d{2})\s+(AM|PM)/).first().textContent();
+    const digitalTime = await page
+      .getByText(/(\d{1,2}):(\d{2})\s+(AM|PM)/)
+      .first()
+      .textContent();
 
     // The clock should be visible and showing the same time
     const clock = page.locator('.clock-container').first();

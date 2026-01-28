@@ -1,12 +1,12 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useGameStore } from '../../stores/gameStore';
 import { useThemeStore } from '../../stores/themeStore';
 import { getTheme } from '../../themes';
 
 const messages = {
-  start: ['Let\'s learn about time!', 'Ready to tell time?', 'Time for fun!'],
+  start: ["Let's learn about time!", 'Ready to tell time?', 'Time for fun!'],
   streak1: ['Great start!', 'Nice one!', 'You got it!'],
-  streak3: ['You\'re on fire!', 'Amazing!', 'Keep it up!'],
+  streak3: ["You're on fire!", 'Amazing!', 'Keep it up!'],
   streak5: ['Incredible!', 'Time master!', 'Unstoppable!'],
   streak10: ['LEGENDARY!', 'Clock champion!', 'Perfect timing!'],
 };

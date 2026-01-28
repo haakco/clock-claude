@@ -1,16 +1,12 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ThemeToggle } from '../../src/components/Layout/ThemeToggle';
 import { useThemeStore } from '../../src/stores/themeStore';
 
 // Mock framer-motion
 vi.mock('framer-motion', () => ({
   motion: {
-    button: ({
-      children,
-      onClick,
-      ...props
-    }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+    button: ({ children, onClick, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
       <button onClick={onClick} {...props}>
         {children}
       </button>
@@ -102,7 +98,6 @@ describe('ThemeToggle', () => {
 
   describe('store integration', () => {
     it('uses toggleTheme from store', () => {
-      const toggleSpy = vi.spyOn(useThemeStore.getState(), 'toggleTheme');
       useThemeStore.setState({ theme: 'blue' });
       render(<ThemeToggle />);
 

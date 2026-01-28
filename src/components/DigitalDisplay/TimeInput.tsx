@@ -1,7 +1,7 @@
-import { WheelPicker } from './WheelPicker';
-import { Time } from '../../types';
 import { useThemeStore } from '../../stores/themeStore';
 import { getTheme } from '../../themes';
+import type { Time } from '../../types';
+import { WheelPicker } from './WheelPicker';
 
 interface TimeInputProps {
   value: Time;
@@ -11,17 +11,10 @@ interface TimeInputProps {
 }
 
 const hours = Array.from({ length: 12 }, (_, i) => String(i + 1));
-const minutes = Array.from({ length: 60 }, (_, i) =>
-  String(i).padStart(2, '0')
-);
+const minutes = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
 const periods: ('AM' | 'PM')[] = ['AM', 'PM'];
 
-export function TimeInput({
-  value,
-  onChange,
-  showPeriod = true,
-  compact = false,
-}: TimeInputProps) {
+export function TimeInput({ value, onChange, showPeriod = true, compact = false }: TimeInputProps) {
   const theme = useThemeStore((state) => state.theme);
   const colors = getTheme(theme).colors;
 
@@ -29,11 +22,11 @@ export function TimeInput({
   const itemHeight = compact ? 36 : 40;
 
   const handleHourChange = (hour: string) => {
-    onChange({ ...value, hours: parseInt(hour) });
+    onChange({ ...value, hours: parseInt(hour, 10) });
   };
 
   const handleMinuteChange = (minute: string) => {
-    onChange({ ...value, minutes: parseInt(minute) });
+    onChange({ ...value, minutes: parseInt(minute, 10) });
   };
 
   const handlePeriodChange = (period: string) => {
@@ -57,10 +50,7 @@ export function TimeInput({
       </div>
 
       {/* Colon separator */}
-      <div
-        className="text-3xl font-bold"
-        style={{ color: colors.primary }}
-      >
+      <div className="text-3xl font-bold" style={{ color: colors.primary }}>
         :
       </div>
 

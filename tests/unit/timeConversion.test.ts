@@ -1,13 +1,13 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
-  to24Hour,
-  to12Hour,
-  hourToAngle,
-  minuteToAngle,
   angleToMinute,
   formatTime12,
   formatTime24,
+  hourToAngle,
+  minuteToAngle,
   timesEqual,
+  to12Hour,
+  to24Hour,
 } from '../../src/utils/timeConversion';
 
 describe('timeConversion', () => {
@@ -123,15 +123,11 @@ describe('timeConversion', () => {
 
   describe('formatTime12', () => {
     it('formats 3:00 PM correctly', () => {
-      expect(formatTime12({ hours: 3, minutes: 0, period: 'PM' })).toBe(
-        '3:00 PM'
-      );
+      expect(formatTime12({ hours: 3, minutes: 0, period: 'PM' })).toBe('3:00 PM');
     });
 
     it('formats 12:30 AM correctly', () => {
-      expect(formatTime12({ hours: 12, minutes: 30, period: 'AM' })).toBe(
-        '12:30 AM'
-      );
+      expect(formatTime12({ hours: 12, minutes: 30, period: 'AM' })).toBe('12:30 AM');
     });
   });
 
@@ -141,37 +137,26 @@ describe('timeConversion', () => {
     });
 
     it('formats 12:30 AM as 00:30', () => {
-      expect(formatTime24({ hours: 12, minutes: 30, period: 'AM' })).toBe(
-        '00:30'
-      );
+      expect(formatTime24({ hours: 12, minutes: 30, period: 'AM' })).toBe('00:30');
     });
   });
 
   describe('timesEqual', () => {
     it('returns true for equal times', () => {
       expect(
-        timesEqual(
-          { hours: 3, minutes: 30, period: 'PM' },
-          { hours: 3, minutes: 30, period: 'PM' }
-        )
+        timesEqual({ hours: 3, minutes: 30, period: 'PM' }, { hours: 3, minutes: 30, period: 'PM' })
       ).toBe(true);
     });
 
     it('returns false for different hours', () => {
       expect(
-        timesEqual(
-          { hours: 3, minutes: 30, period: 'PM' },
-          { hours: 4, minutes: 30, period: 'PM' }
-        )
+        timesEqual({ hours: 3, minutes: 30, period: 'PM' }, { hours: 4, minutes: 30, period: 'PM' })
       ).toBe(false);
     });
 
     it('returns false for different periods', () => {
       expect(
-        timesEqual(
-          { hours: 3, minutes: 30, period: 'PM' },
-          { hours: 3, minutes: 30, period: 'AM' }
-        )
+        timesEqual({ hours: 3, minutes: 30, period: 'PM' }, { hours: 3, minutes: 30, period: 'AM' })
       ).toBe(false);
     });
   });

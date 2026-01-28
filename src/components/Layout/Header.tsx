@@ -1,11 +1,11 @@
 import { motion } from 'framer-motion';
-import { ThemeToggle } from './ThemeToggle';
-import { ScoreDisplay } from './ScoreDisplay';
-import { DifficultySelector } from './DifficultySelector';
+import { Volume2, VolumeX } from 'lucide-react';
+import { useGameStore } from '../../stores/gameStore';
 import { useThemeStore } from '../../stores/themeStore';
 import { getTheme } from '../../themes';
-import { useGameStore } from '../../stores/gameStore';
-import { Volume2, VolumeX } from 'lucide-react';
+import { DifficultySelector } from './DifficultySelector';
+import { ScoreDisplay } from './ScoreDisplay';
+import { ThemeToggle } from './ThemeToggle';
 
 export function Header() {
   const theme = useThemeStore((state) => state.theme);

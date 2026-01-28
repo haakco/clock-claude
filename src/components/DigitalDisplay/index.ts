@@ -1,4 +1,3 @@
-export { DigitalTime } from './DigitalTime';
-export { TimeInput } from './TimeInput';
 export { TimeDisplayInput } from './TimeDisplayInput';
+export { TimeInput } from './TimeInput';
 export { WheelPicker } from './WheelPicker';

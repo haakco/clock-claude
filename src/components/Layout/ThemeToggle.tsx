@@ -19,9 +19,7 @@ export function ThemeToggle() {
       >
         {theme === 'blue' ? '🔵' : '🩷'}
       </motion.span>
-      <span className="hidden sm:inline">
-        {theme === 'blue' ? 'Blue' : 'Pink'}
-      </span>
+      <span className="hidden sm:inline">{theme === 'blue' ? 'Blue' : 'Pink'}</span>
     </motion.button>
   );
 }

@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AnalogClock } from '../../src/components/Clock/AnalogClock';
 import { useGameStore } from '../../src/stores/gameStore';
 import { hourToAngle, minuteToAngle } from '../../src/utils/timeConversion';

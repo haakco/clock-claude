@@ -1,13 +1,14 @@
-import { useState, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import confetti from 'canvas-confetti';
+import { motion } from 'framer-motion';
 import { Volume2 } from 'lucide-react';
-import { TimeInput } from '../DigitalDisplay/TimeInput';
-import { WordProblem as WordProblemType, Time } from '../../types';
+import { useCallback } from 'react';
+import { useQuizAnswer } from '../../hooks/useQuizAnswer';
+import { useSpeech } from '../../hooks/useSpeech';
 import { useThemeStore } from '../../stores/themeStore';
 import { getTheme } from '../../themes';
-import { useSound } from '../../hooks/useSound';
-import { useSpeech } from '../../hooks/useSpeech';
+import type { Time, WordProblem as WordProblemType } from '../../types';
+import { TimeInput } from '../DigitalDisplay/TimeInput';
+import { QuizActionButton } from './QuizActionButton';
+import { QuizAnswerSection } from './QuizAnswerSection';
 
 interface WordProblemProps {
   problem: WordProblemType;
@@ -18,45 +19,20 @@ interface WordProblemProps {
 export function WordProblem({ problem, onAnswer, onNext }: WordProblemProps) {
   const theme = useThemeStore((state) => state.theme);
   const colors = getTheme(theme).colors;
-  const { playSound } = useSound();
   const { speak } = useSpeech();
 
   const handleSpeakQuestion = useCallback(() => {
     speak(`What time is ${problem.timeInWords}?`);
   }, [speak, problem.timeInWords]);
 
-  const [userAnswer, setUserAnswer] = useState<Time>({
-    hours: 12,
-    minutes: 0,
-    period: 'AM',
-  });
-  const [showResult, setShowResult] = useState(false);
-  const [isCorrect, setIsCorrect] = useState(false);
-
-  const handleCheck = () => {
-    const correct = onAnswer(userAnswer);
-    setIsCorrect(correct);
-    setShowResult(true);
-
-    if (correct) {
-      playSound('correct');
-      confetti({
-        particleCount: 80,
-        spread: 100,
-        origin: { y: 0.5 },
-        colors: [colors.primary, colors.accent, '#ffd700', '#ff69b4'],
-      });
-    } else {
-      playSound('incorrect');
-    }
-  };
-
-  const handleNext = () => {
-    playSound('whoosh');
-    setShowResult(false);
-    setUserAnswer({ hours: 12, minutes: 0, period: 'AM' });
-    onNext();
-  };
+  const { userAnswer, setUserAnswer, showResult, isCorrect, handleCheck, handleNext } =
+    useQuizAnswer({
+      onAnswer,
+      onNext,
+      confettiColors: [colors.primary, colors.accent, '#ffd700', '#ff69b4'],
+      confettiConfig: { particleCount: 80, spread: 100, origin: { y: 0.5 } },
+      playWhooshOnNext: true,
+    });
 
   return (
     <motion.div
@@ -65,10 +41,7 @@ export function WordProblem({ problem, onAnswer, onNext }: WordProblemProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
     >
-      <h3
-        className="text-xl font-bold mb-4 text-center"
-        style={{ color: colors.secondary }}
-      >
+      <h3 className="text-xl font-bold mb-4 text-center" style={{ color: colors.secondary }}>
         Word Challenge
       </h3>
 
@@ -81,10 +54,7 @@ export function WordProblem({ problem, onAnswer, onNext }: WordProblemProps) {
         animate={{ scale: 1 }}
       >
         <div className="flex items-center justify-center gap-2 mb-2">
-          <p
-            className="text-lg font-medium"
-            style={{ color: colors.secondary }}
-          >
+          <p className="text-lg font-medium" style={{ color: colors.secondary }}>
             What time is
           </p>
           <motion.button
@@ -98,48 +68,29 @@ export function WordProblem({ problem, onAnswer, onNext }: WordProblemProps) {
             <Volume2 size={18} style={{ color: colors.primary }} />
           </motion.button>
         </div>
-        <p
-          className="text-2xl font-bold"
-          style={{ color: colors.primary }}
-        >
+        <p className="text-2xl font-bold" style={{ color: colors.primary }}>
           "{problem.timeInWords}"?
         </p>
       </motion.div>
 
       {/* Answer input or result */}
-      <AnimatePresence mode="wait">
-        {!showResult ? (
-          <motion.div
-            key="input"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <TimeInput
-              value={userAnswer}
-              onChange={setUserAnswer}
-              showPeriod
-              compact
-            />
-
-            <motion.button
-              className="w-full mt-4 py-3 rounded-xl font-bold text-white text-lg"
-              style={{ background: colors.primary }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+      <QuizAnswerSection
+        showResult={showResult}
+        resultClassName="text-center"
+        inputContent={
+          <>
+            <TimeInput value={userAnswer} onChange={setUserAnswer} showPeriod compact />
+            <QuizActionButton
               onClick={handleCheck}
+              backgroundColor={colors.primary}
+              className="mt-4 text-lg"
             >
               Check Answer!
-            </motion.button>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="result"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            className="text-center"
-          >
+            </QuizActionButton>
+          </>
+        }
+        resultContent={
+          <>
             {isCorrect ? (
               <motion.div
                 className="text-green-500 text-3xl font-bold mb-4"
@@ -152,23 +103,15 @@ export function WordProblem({ problem, onAnswer, onNext }: WordProblemProps) {
             ) : (
               <div className="text-red-500 text-xl font-bold mb-4">
                 Not quite! The answer is {problem.correctTime.hours}:
-                {String(problem.correctTime.minutes).padStart(2, '0')}{' '}
-                {problem.correctTime.period}
+                {String(problem.correctTime.minutes).padStart(2, '0')} {problem.correctTime.period}
               </div>
             )}
-
-            <motion.button
-              className="w-full py-3 rounded-xl font-bold text-white"
-              style={{ background: colors.secondary }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={handleNext}
-            >
+            <QuizActionButton onClick={handleNext} backgroundColor={colors.secondary}>
               Next Challenge
-            </motion.button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </QuizActionButton>
+          </>
+        }
+      />
     </motion.div>
   );
 }

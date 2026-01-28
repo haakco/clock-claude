@@ -1,5 +1,5 @@
-import React from 'react';
 import { motion } from 'framer-motion';
+import type React from 'react';
 
 interface ClockHandProps {
   angle: number;
@@ -71,14 +71,7 @@ export function ClockHand({
       />
 
       {/* Arrow tip for minute hand */}
-      {type === 'minute' && (
-        <circle
-          cx={endX}
-          cy={endY}
-          r={width * 1.5}
-          fill={color}
-        />
-      )}
+      {type === 'minute' && <circle cx={endX} cy={endY} r={width * 1.5} fill={color} />}
     </motion.g>
   );
 }

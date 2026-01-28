@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useGameStore } from '../stores/gameStore';
-import { Time } from '../types';
+import type { Time } from '../types';
 import { hourToAngle, minuteToAngle } from '../utils/timeConversion';
 
 export function useTime() {

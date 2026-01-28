@@ -1,4 +1,4 @@
-import { Time } from '../types';
+import type { Time } from '../types';
 
 const numberWords: Record<number, string> = {
   0: 'twelve',
@@ -56,12 +56,11 @@ function getPeriodPhrase(hours: number, period: 'AM' | 'PM'): string {
     if (hours === 12) return 'at midnight';
     if (hours < 6) return 'at night';
     return 'in the morning';
-  } else {
-    if (hours === 12) return 'at noon';
-    if (hours < 6) return 'in the afternoon';
-    if (hours < 9) return 'in the evening';
-    return 'at night';
   }
+  if (hours === 12) return 'at noon';
+  if (hours < 6) return 'in the afternoon';
+  if (hours < 9) return 'in the evening';
+  return 'at night';
 }
 
 /**
@@ -128,7 +127,7 @@ export function timeToWords(time: Time, includePeriod = false): string {
       ];
       return randomPick(phrases) + periodPhrase;
     }
-    return `${minutes} past ${hourWord}` + periodPhrase;
+    return `${minutes} past ${hourWord}${periodPhrase}`;
   }
 
   // Minutes to (31-59)
@@ -144,11 +143,107 @@ export function timeToWords(time: Time, includePeriod = false): string {
       ];
       return randomPick(phrases) + periodPhrase;
     }
-    return `${minutesTo} to ${nextHourWord}` + periodPhrase;
+    return `${minutesTo} to ${nextHourWord}${periodPhrase}`;
   }
 
-  return `${hourWord} ${minutes.toString().padStart(2, '0')}` + periodPhrase;
+  return `${hourWord} ${minutes.toString().padStart(2, '0')}${periodPhrase}`;
 }
+
+/**
+ * Find the numeric key for a word in numberWords
+ */
+function wordToNumber(word: string): number | null {
+  const entry = Object.entries(numberWords).find(([, w]) => w === word);
+  return entry ? parseInt(entry[0], 10) : null;
+}
+
+/**
+ * Get the previous hour (wrapping 1 to 12)
+ */
+function getPrevHour(hour: number): number {
+  return hour === 1 ? 12 : hour - 1;
+}
+
+/**
+ * Create a time result with default period
+ */
+function createTime(hours: number, minutes: number): Time {
+  return { hours: hours || 12, minutes, period: 'AM' };
+}
+
+type PatternParser = (normalized: string) => Time | null;
+
+/**
+ * Parse "X o'clock" pattern
+ */
+const parseOclock: PatternParser = (normalized) => {
+  const match = normalized.match(/^(\w+(?:-\w+)?)\s+o'clock$/);
+  if (!match) return null;
+  const hour = wordToNumber(match[1]);
+  return hour !== null ? createTime(hour, 0) : null;
+};
+
+/**
+ * Parse "quarter past X" pattern
+ */
+const parseQuarterPast: PatternParser = (normalized) => {
+  const match = normalized.match(/^quarter\s+past\s+(\w+(?:-\w+)?)$/);
+  if (!match) return null;
+  const hour = wordToNumber(match[1]);
+  return hour !== null ? createTime(hour, 15) : null;
+};
+
+/**
+ * Parse "half past X" pattern
+ */
+const parseHalfPast: PatternParser = (normalized) => {
+  const match = normalized.match(/^half\s+past\s+(\w+(?:-\w+)?)$/);
+  if (!match) return null;
+  const hour = wordToNumber(match[1]);
+  return hour !== null ? createTime(hour, 30) : null;
+};
+
+/**
+ * Parse "quarter to X" pattern
+ */
+const parseQuarterTo: PatternParser = (normalized) => {
+  const match = normalized.match(/^quarter\s+to\s+(\w+(?:-\w+)?)$/);
+  if (!match) return null;
+  const hour = wordToNumber(match[1]);
+  return hour !== null ? createTime(getPrevHour(hour), 45) : null;
+};
+
+/**
+ * Parse "X past Y" pattern
+ */
+const parsePast: PatternParser = (normalized) => {
+  const match = normalized.match(/^(\w+(?:-\w+)?)\s+past\s+(\w+(?:-\w+)?)$/);
+  if (!match) return null;
+  const minute = wordToNumber(match[1]);
+  const hour = wordToNumber(match[2]);
+  return minute !== null && hour !== null ? createTime(hour, minute) : null;
+};
+
+/**
+ * Parse "X to Y" pattern
+ */
+const parseTo: PatternParser = (normalized) => {
+  const match = normalized.match(/^(\w+(?:-\w+)?)\s+to\s+(\w+(?:-\w+)?)$/);
+  if (!match) return null;
+  const minutesTo = wordToNumber(match[1]);
+  const hour = wordToNumber(match[2]);
+  return minutesTo !== null && hour !== null ? createTime(getPrevHour(hour), 60 - minutesTo) : null;
+};
+
+/** All pattern parsers in order of specificity */
+const patternParsers: PatternParser[] = [
+  parseOclock,
+  parseQuarterPast,
+  parseHalfPast,
+  parseQuarterTo,
+  parsePast,
+  parseTo,
+];
 
 /**
  * Parse time from words (for validation)
@@ -157,94 +252,9 @@ export function timeToWords(time: Time, includePeriod = false): string {
 export function wordsToTime(words: string): Time | null {
   const normalized = words.toLowerCase().trim();
 
-  // O'clock pattern
-  const oclockMatch = normalized.match(/^(\w+(?:-\w+)?)\s+o'clock$/);
-  if (oclockMatch) {
-    const hourWord = oclockMatch[1];
-    const hour = Object.entries(numberWords).find(
-      ([, word]) => word === hourWord
-    )?.[0];
-    if (hour) {
-      return { hours: parseInt(hour) || 12, minutes: 0, period: 'AM' };
-    }
-  }
-
-  // Quarter past pattern
-  const quarterPastMatch = normalized.match(/^quarter\s+past\s+(\w+(?:-\w+)?)$/);
-  if (quarterPastMatch) {
-    const hourWord = quarterPastMatch[1];
-    const hour = Object.entries(numberWords).find(
-      ([, word]) => word === hourWord
-    )?.[0];
-    if (hour) {
-      return { hours: parseInt(hour) || 12, minutes: 15, period: 'AM' };
-    }
-  }
-
-  // Half past pattern
-  const halfPastMatch = normalized.match(/^half\s+past\s+(\w+(?:-\w+)?)$/);
-  if (halfPastMatch) {
-    const hourWord = halfPastMatch[1];
-    const hour = Object.entries(numberWords).find(
-      ([, word]) => word === hourWord
-    )?.[0];
-    if (hour) {
-      return { hours: parseInt(hour) || 12, minutes: 30, period: 'AM' };
-    }
-  }
-
-  // Quarter to pattern
-  const quarterToMatch = normalized.match(/^quarter\s+to\s+(\w+(?:-\w+)?)$/);
-  if (quarterToMatch) {
-    const hourWord = quarterToMatch[1];
-    const hour = Object.entries(numberWords).find(
-      ([, word]) => word === hourWord
-    )?.[0];
-    if (hour) {
-      const prevHour = parseInt(hour) === 1 ? 12 : parseInt(hour) - 1;
-      return { hours: prevHour || 12, minutes: 45, period: 'AM' };
-    }
-  }
-
-  // X past Y pattern
-  const pastMatch = normalized.match(/^(\w+(?:-\w+)?)\s+past\s+(\w+(?:-\w+)?)$/);
-  if (pastMatch) {
-    const minuteWord = pastMatch[1];
-    const hourWord = pastMatch[2];
-    const minute = Object.entries(numberWords).find(
-      ([, word]) => word === minuteWord
-    )?.[0];
-    const hour = Object.entries(numberWords).find(
-      ([, word]) => word === hourWord
-    )?.[0];
-    if (minute && hour) {
-      return {
-        hours: parseInt(hour) || 12,
-        minutes: parseInt(minute),
-        period: 'AM',
-      };
-    }
-  }
-
-  // X to Y pattern
-  const toMatch = normalized.match(/^(\w+(?:-\w+)?)\s+to\s+(\w+(?:-\w+)?)$/);
-  if (toMatch) {
-    const minuteWord = toMatch[1];
-    const hourWord = toMatch[2];
-    const minutesTo = Object.entries(numberWords).find(
-      ([, word]) => word === minuteWord
-    )?.[0];
-    const hour = Object.entries(numberWords).find(
-      ([, word]) => word === hourWord
-    )?.[0];
-    if (minutesTo && hour) {
-      const prevHour = parseInt(hour) === 1 ? 12 : parseInt(hour) - 1;
-      return {
-        hours: prevHour || 12,
-        minutes: 60 - parseInt(minutesTo),
-        period: 'AM',
-      };
-    }
+  for (const parser of patternParsers) {
+    const result = parser(normalized);
+    if (result) return result;
   }
 
   return null;

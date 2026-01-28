@@ -1,5 +1,5 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
-import { calculateAngle, angleToMinute } from '../utils/timeConversion';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { angleToMinute, calculateAngle } from '../utils/timeConversion';
 
 interface UseClockDragOptions {
   onMinuteChange: (minutes: number) => void;
@@ -33,22 +33,26 @@ export function useClockDrag({
     };
   }, []);
 
-  const getEventPosition = useCallback(
-    (e: MouseEvent | TouchEvent): { x: number; y: number } => {
-      if ('touches' in e) {
-        return { x: e.touches[0].clientX, y: e.touches[0].clientY };
-      }
-      return { x: e.clientX, y: e.clientY };
+  const getEventPosition = useCallback((e: MouseEvent | TouchEvent): { x: number; y: number } => {
+    if ('touches' in e) {
+      return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }
+    return { x: e.clientX, y: e.clientY };
+  }, []);
+
+  const getAngleFromEvent = useCallback(
+    (e: MouseEvent | TouchEvent): number => {
+      e.preventDefault();
+      const center = getClockCenter();
+      const pos = getEventPosition(e);
+      return calculateAngle(center.x, center.y, pos.x, pos.y);
     },
-    []
+    [getClockCenter, getEventPosition]
   );
 
   const handleMinuteMove = useCallback(
     (e: MouseEvent | TouchEvent) => {
-      e.preventDefault();
-      const center = getClockCenter();
-      const pos = getEventPosition(e);
-      const angle = calculateAngle(center.x, center.y, pos.x, pos.y);
+      const angle = getAngleFromEvent(e);
       let minutes = angleToMinute(angle);
 
       if (snapToFive) {
@@ -58,15 +62,12 @@ export function useClockDrag({
 
       onMinuteChange(minutes);
     },
-    [getClockCenter, getEventPosition, onMinuteChange, snapToFive]
+    [getAngleFromEvent, onMinuteChange, snapToFive]
   );
 
   const handleHourMove = useCallback(
     (e: MouseEvent | TouchEvent) => {
-      e.preventDefault();
-      const center = getClockCenter();
-      const pos = getEventPosition(e);
-      const angle = calculateAngle(center.x, center.y, pos.x, pos.y);
+      const angle = getAngleFromEvent(e);
 
       // Convert angle to hour (each hour = 30 degrees)
       let hour = Math.round(angle / 30);
@@ -75,7 +76,7 @@ export function useClockDrag({
 
       onHourChange(hour);
     },
-    [getClockCenter, getEventPosition, onHourChange]
+    [getAngleFromEvent, onHourChange]
   );
 
   const handleMinuteEnd = useCallback(() => {
@@ -86,23 +87,17 @@ export function useClockDrag({
     setIsDraggingHour(false);
   }, []);
 
-  const handleMinuteStart = useCallback(
-    (e: React.MouseEvent | React.TouchEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setIsDraggingMinute(true);
-    },
-    []
-  );
+  const handleMinuteStart = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingMinute(true);
+  }, []);
 
-  const handleHourStart = useCallback(
-    (e: React.MouseEvent | React.TouchEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setIsDraggingHour(true);
-    },
-    []
-  );
+  const handleHourStart = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingHour(true);
+  }, []);
 
   // Add/remove event listeners for dragging
   useEffect(() => {

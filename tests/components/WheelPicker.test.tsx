@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 import { WheelPicker } from '../../src/components/DigitalDisplay/WheelPicker';
 
 // Mock framer-motion
@@ -13,9 +13,7 @@ vi.mock('framer-motion', () => ({
 
 describe('WheelPicker', () => {
   const hourItems = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
-  const minuteItems = Array.from({ length: 60 }, (_, i) =>
-    i.toString().padStart(2, '0')
-  );
+  const minuteItems = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0'));
   const periodItems = ['AM', 'PM'];
 
   describe('rendering', () => {
@@ -97,9 +95,7 @@ describe('WheelPicker', () => {
 
     it('accepts custom height', () => {
       const onChange = vi.fn();
-      render(
-        <WheelPicker items={hourItems} value="3" onChange={onChange} height={200} />
-      );
+      render(<WheelPicker items={hourItems} value="3" onChange={onChange} height={200} />);
 
       const container = document.querySelector('.overflow-hidden');
       expect(container?.getAttribute('style')).toContain('height: 200px');
@@ -107,14 +103,7 @@ describe('WheelPicker', () => {
 
     it('accepts custom itemHeight', () => {
       const onChange = vi.fn();
-      render(
-        <WheelPicker
-          items={hourItems}
-          value="3"
-          onChange={onChange}
-          itemHeight={50}
-        />
-      );
+      render(<WheelPicker items={hourItems} value="3" onChange={onChange} itemHeight={50} />);
 
       // Items should have the custom height
       const items = document.querySelectorAll('.flex.items-center.justify-center');
@@ -183,9 +172,7 @@ describe('WheelPicker', () => {
   describe('value changes', () => {
     it('updates when value prop changes', () => {
       const onChange = vi.fn();
-      const { rerender } = render(
-        <WheelPicker items={hourItems} value="3" onChange={onChange} />
-      );
+      const { rerender } = render(<WheelPicker items={hourItems} value="3" onChange={onChange} />);
 
       rerender(<WheelPicker items={hourItems} value="6" onChange={onChange} />);
 

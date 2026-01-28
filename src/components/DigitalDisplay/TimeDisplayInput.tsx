@@ -1,13 +1,14 @@
-import { useState, useCallback, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Volume2, Pencil, Check, Clock } from 'lucide-react';
-import { WheelPicker } from './WheelPicker';
-import { Time } from '../../types';
-import { formatTime12, formatTime24 } from '../../utils/timeConversion';
-import { timeToWords } from '../../utils/timeToWords';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Check, Clock, Pencil } from 'lucide-react';
+import { useCallback, useMemo, useState } from 'react';
+import { useDisplayTime } from '../../hooks/useDisplayTime';
+import { useSpeech } from '../../hooks/useSpeech';
 import { useThemeStore } from '../../stores/themeStore';
 import { getTheme } from '../../themes';
-import { useSpeech } from '../../hooks/useSpeech';
+import type { Time } from '../../types';
+import { TimeValueDisplay } from './TimeValueDisplay';
+import { TimeWordsDisplay } from './TimeWordsDisplay';
+import { WheelPicker } from './WheelPicker';
 
 interface TimeDisplayInputProps {
   time: Time;
@@ -18,29 +19,79 @@ interface TimeDisplayInputProps {
 // Generate picker options
 const hours12 = Array.from({ length: 12 }, (_, i) => String(i + 1));
 const hours24 = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'));
-const minutes = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
+const minuteOptions = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
 const periods: ('AM' | 'PM')[] = ['AM', 'PM'];
 
-export function TimeDisplayInput({
+interface TimePickerProps {
+  time: Time;
+  use24Hour: boolean;
+  current24Hour: string;
+  colors: { primary: string };
+  onHour24Change: (hour: string) => void;
+  onHour12Change: (hour: string) => void;
+  onMinuteChange: (minute: string) => void;
+  onPeriodChange: (period: string) => void;
+}
+
+function TimePicker({
   time,
-  onChange,
-  showWords = true,
-}: TimeDisplayInputProps) {
+  use24Hour,
+  current24Hour,
+  colors,
+  onHour24Change,
+  onHour12Change,
+  onMinuteChange,
+  onPeriodChange,
+}: TimePickerProps) {
+  const hourItems = use24Hour ? hours24 : hours12;
+  const hourValue = use24Hour ? current24Hour : String(time.hours);
+  const onHourChange = use24Hour ? onHour24Change : onHour12Change;
+
+  return (
+    <div className="flex items-center justify-center gap-2">
+      <div className="w-16">
+        <WheelPicker
+          items={hourItems}
+          value={hourValue}
+          onChange={onHourChange}
+          height={120}
+          itemHeight={36}
+        />
+      </div>
+      <div className="text-3xl font-bold" style={{ color: colors.primary }}>
+        :
+      </div>
+      <div className="w-16">
+        <WheelPicker
+          items={minuteOptions}
+          value={String(time.minutes).padStart(2, '0')}
+          onChange={onMinuteChange}
+          height={120}
+          itemHeight={36}
+        />
+      </div>
+      {!use24Hour && (
+        <div className="w-16 ml-2">
+          <WheelPicker
+            items={periods}
+            value={time.period}
+            onChange={onPeriodChange}
+            height={120}
+            itemHeight={36}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function TimeDisplayInput({ time, onChange, showWords = true }: TimeDisplayInputProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [use24Hour, setUse24Hour] = useState(false);
   const theme = useThemeStore((state) => state.theme);
   const colors = getTheme(theme).colors;
   const { speakTime, speakTime24 } = useSpeech();
-
-  // Display time rounds to 5-minute boundaries
-  const displayTime = useMemo((): Time => {
-    const roundedMinute = Math.floor(time.minutes / 5) * 5;
-    return { hours: time.hours, minutes: roundedMinute, period: time.period };
-  }, [time.hours, time.minutes, time.period]);
-
-  const time12 = formatTime12(displayTime);
-  const time24 = formatTime24(displayTime);
-  const words = timeToWords(displayTime);
+  const { displayTime, time12, time24, words } = useDisplayTime(time);
 
   const handleSpeak12 = useCallback(() => {
     speakTime(displayTime.hours, displayTime.minutes, displayTime.period);
@@ -52,18 +103,18 @@ export function TimeDisplayInput({
 
   // Convert 24h value to 12h for storage
   const handleHour24Change = (hour24: string) => {
-    const h = parseInt(hour24);
+    const h = parseInt(hour24, 10);
     const newPeriod: 'AM' | 'PM' = h < 12 ? 'AM' : 'PM';
     const newHour = h === 0 ? 12 : h > 12 ? h - 12 : h;
     onChange({ ...time, hours: newHour, period: newPeriod });
   };
 
   const handleHour12Change = (hour: string) => {
-    onChange({ ...time, hours: parseInt(hour) });
+    onChange({ ...time, hours: parseInt(hour, 10) });
   };
 
   const handleMinuteChange = (minute: string) => {
-    onChange({ ...time, minutes: parseInt(minute) });
+    onChange({ ...time, minutes: parseInt(minute, 10) });
   };
 
   const handlePeriodChange = (period: string) => {
@@ -98,64 +149,30 @@ export function TimeDisplayInput({
             {/* Both time formats side by side */}
             <div className="flex items-center justify-center gap-4 flex-wrap">
               {/* 12-hour time with speak button */}
-              <div className="flex items-center gap-2">
-                <motion.div
-                  className="text-3xl font-bold font-display cursor-pointer hover:opacity-80"
-                  style={{ color: colors.primary }}
-                  key={time12}
-                  initial={{ scale: 0.9 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: 'spring', stiffness: 300 }}
-                  onClick={() => setIsEditing(true)}
-                  title="Click to edit"
-                >
-                  {time12}
-                </motion.div>
-                <motion.button
-                  className="p-2 rounded-full"
-                  style={{ background: `${colors.primary}20` }}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={handleSpeak12}
-                  title="Listen to the time"
-                >
-                  <Volume2 size={18} style={{ color: colors.primary }} />
-                </motion.button>
-              </div>
+              <TimeValueDisplay
+                value={time12}
+                color={colors.primary}
+                onSpeak={handleSpeak12}
+                speakTitle="Listen to the time"
+                onClick={() => setIsEditing(true)}
+                className="text-3xl"
+              />
 
               {/* Divider */}
-              <div
-                className="text-2xl font-light opacity-30"
-                style={{ color: colors.secondary }}
-              >
+              <div className="text-2xl font-light opacity-30" style={{ color: colors.secondary }}>
                 /
               </div>
 
               {/* 24-hour time with speak button */}
-              <div className="flex items-center gap-2">
-                <motion.div
-                  className="text-3xl font-bold font-display cursor-pointer hover:opacity-80"
-                  style={{ color: colors.secondary }}
-                  key={time24}
-                  initial={{ scale: 0.9 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: 'spring', stiffness: 300 }}
-                  onClick={() => setIsEditing(true)}
-                  title="Click to edit"
-                >
-                  {time24}
-                </motion.div>
-                <motion.button
-                  className="p-2 rounded-full"
-                  style={{ background: `${colors.primary}20` }}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={handleSpeak24}
-                  title="Listen to the time (24-hour)"
-                >
-                  <Volume2 size={18} style={{ color: colors.primary }} />
-                </motion.button>
-              </div>
+              <TimeValueDisplay
+                value={time24}
+                color={colors.secondary}
+                onSpeak={handleSpeak24}
+                speakTitle="Listen to the time (24-hour)"
+                onClick={() => setIsEditing(true)}
+                className="text-3xl"
+                speakButtonColor={colors.primary}
+              />
 
               {/* Edit button */}
               <motion.button
@@ -172,19 +189,11 @@ export function TimeDisplayInput({
 
             {/* Time in words */}
             {showWords && (
-              <motion.div
-                className="mt-3 p-3 rounded-xl text-lg font-medium"
-                style={{
-                  background: `${colors.primary}15`,
-                  color: colors.secondary,
-                }}
-                key={words}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.1 }}
-              >
-                "{words}"
-              </motion.div>
+              <TimeWordsDisplay
+                words={words}
+                primaryColor={colors.primary}
+                secondaryColor={colors.secondary}
+              />
             )}
           </motion.div>
         ) : (
@@ -238,74 +247,16 @@ export function TimeDisplayInput({
             </div>
 
             {/* Wheel pickers */}
-            <div className="flex items-center justify-center gap-2">
-              {use24Hour ? (
-                // 24-hour mode
-                <>
-                  <div className="w-16">
-                    <WheelPicker
-                      items={hours24}
-                      value={current24Hour}
-                      onChange={handleHour24Change}
-                      height={120}
-                      itemHeight={36}
-                    />
-                  </div>
-                  <div
-                    className="text-3xl font-bold"
-                    style={{ color: colors.primary }}
-                  >
-                    :
-                  </div>
-                  <div className="w-16">
-                    <WheelPicker
-                      items={minutes}
-                      value={String(time.minutes).padStart(2, '0')}
-                      onChange={handleMinuteChange}
-                      height={120}
-                      itemHeight={36}
-                    />
-                  </div>
-                </>
-              ) : (
-                // 12-hour mode
-                <>
-                  <div className="w-16">
-                    <WheelPicker
-                      items={hours12}
-                      value={String(time.hours)}
-                      onChange={handleHour12Change}
-                      height={120}
-                      itemHeight={36}
-                    />
-                  </div>
-                  <div
-                    className="text-3xl font-bold"
-                    style={{ color: colors.primary }}
-                  >
-                    :
-                  </div>
-                  <div className="w-16">
-                    <WheelPicker
-                      items={minutes}
-                      value={String(time.minutes).padStart(2, '0')}
-                      onChange={handleMinuteChange}
-                      height={120}
-                      itemHeight={36}
-                    />
-                  </div>
-                  <div className="w-16 ml-2">
-                    <WheelPicker
-                      items={periods}
-                      value={time.period}
-                      onChange={handlePeriodChange}
-                      height={120}
-                      itemHeight={36}
-                    />
-                  </div>
-                </>
-              )}
-            </div>
+            <TimePicker
+              time={time}
+              use24Hour={use24Hour}
+              current24Hour={current24Hour}
+              colors={colors}
+              onHour24Change={handleHour24Change}
+              onHour12Change={handleHour12Change}
+              onMinuteChange={handleMinuteChange}
+              onPeriodChange={handlePeriodChange}
+            />
 
             {/* Current time preview */}
             <div

@@ -1,4 +1,4 @@
-import { Theme, ThemeConfig } from '../types';
+import type { Theme, ThemeConfig } from '../types';
 import { blueTheme } from './blue';
 import { pinkTheme } from './pink';
 

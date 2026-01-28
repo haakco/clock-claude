@@ -1,9 +1,9 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useGameStore } from '../../src/stores/gameStore';
 
 // Mock crypto.randomUUID
 vi.stubGlobal('crypto', {
-  randomUUID: () => 'test-uuid-' + Math.random().toString(36).substring(2),
+  randomUUID: () => `test-uuid-${Math.random().toString(36).substring(2)}`,
 });
 
 describe('gameStore', () => {
@@ -155,9 +155,7 @@ describe('gameStore', () => {
 
     it('generates new quiz questions on reset', () => {
       useGameStore.getState().generateNewQuizQuestions();
-      const originalIds = useGameStore
-        .getState()
-        .quizQuestions.map((q) => q.id);
+      const originalIds = useGameStore.getState().quizQuestions.map((q) => q.id);
 
       useGameStore.getState().resetGame();
 
@@ -191,9 +189,7 @@ describe('gameStore', () => {
 
     it('regenerates quiz questions when difficulty changes', () => {
       useGameStore.getState().generateNewQuizQuestions();
-      const originalIds = useGameStore
-        .getState()
-        .quizQuestions.map((q) => q.id);
+      const originalIds = useGameStore.getState().quizQuestions.map((q) => q.id);
 
       useGameStore.getState().setDifficulty('easy');
 

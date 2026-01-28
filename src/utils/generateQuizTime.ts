@@ -1,4 +1,4 @@
-import { Difficulty, Time } from '../types';
+import type { Difficulty, Time } from '../types';
 
 /**
  * Generate a random hour (1-12)
@@ -52,10 +52,7 @@ export function generateQuizTime(difficulty: Difficulty): Time {
 /**
  * Generate multiple unique quiz times
  */
-export function generateMultipleQuizTimes(
-  difficulty: Difficulty,
-  count: number
-): Time[] {
+export function generateMultipleQuizTimes(difficulty: Difficulty, count: number): Time[] {
   const times: Time[] = [];
   const seen = new Set<string>();
 
