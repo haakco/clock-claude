@@ -28,18 +28,38 @@ export function useSound() {
 
   // Initialize audio context on first user interaction
   useEffect(() => {
+    // Track whether audio has been initialized to prevent race conditions
+    let isInitialized = false;
+    // Track whether the effect has been cleaned up
+    let isCleanedUp = false;
+
     const initAudio = () => {
+      // Prevent initialization after cleanup or if already initialized
+      if (isCleanedUp || isInitialized) return;
+
+      isInitialized = true;
+
+      // Remove both listeners once one fires to prevent duplicate initialization
+      window.removeEventListener('click', initAudio);
+      window.removeEventListener('touchstart', initAudio);
+
       if (!audioContextRef.current) {
         audioContextRef.current = new AudioContext();
       }
     };
 
-    window.addEventListener('click', initAudio, { once: true });
-    window.addEventListener('touchstart', initAudio, { once: true });
+    // Don't use { once: true } - we handle removal manually to avoid race conditions
+    window.addEventListener('click', initAudio);
+    window.addEventListener('touchstart', initAudio);
 
     return () => {
+      isCleanedUp = true;
+
+      // Always attempt to remove listeners (safe even if already removed)
       window.removeEventListener('click', initAudio);
       window.removeEventListener('touchstart', initAudio);
+
+      // Close AudioContext to prevent memory leak
       if (audioContextRef.current) {
         audioContextRef.current.close();
         audioContextRef.current = null;

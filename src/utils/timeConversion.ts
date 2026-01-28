@@ -1,5 +1,15 @@
 import type { Time, Time24 } from '../types';
 
+// Clock geometry constants
+const DEGREES_IN_CIRCLE = 360;
+const HOURS_ON_CLOCK = 12;
+const MINUTES_IN_HOUR = 60;
+const DEGREES_PER_HOUR = DEGREES_IN_CIRCLE / HOURS_ON_CLOCK; // 30
+const DEGREES_PER_MINUTE = DEGREES_IN_CIRCLE / MINUTES_IN_HOUR; // 6
+const HOUR_HAND_DEGREES_PER_MINUTE = DEGREES_PER_HOUR / MINUTES_IN_HOUR; // 0.5
+const RADIANS_TO_DEGREES = 180 / Math.PI;
+const SNAP_INCREMENT = 5;
+
 /**
  * Convert 12-hour time to 24-hour time
  */
@@ -45,10 +55,8 @@ export function to12Hour(time24: Time24): Time {
  * Each hour = 30 degrees, plus adjustment for minutes
  */
 export function hourToAngle(hours: number, minutes: number): number {
-  // Each hour is 30 degrees (360 / 12)
-  // Each minute adds 0.5 degrees to the hour hand (30 / 60)
-  const hourAngle = (hours % 12) * 30;
-  const minuteAdjustment = minutes * 0.5;
+  const hourAngle = (hours % HOURS_ON_CLOCK) * DEGREES_PER_HOUR;
+  const minuteAdjustment = minutes * HOUR_HAND_DEGREES_PER_MINUTE;
   return hourAngle + minuteAdjustment;
 }
 
@@ -57,7 +65,7 @@ export function hourToAngle(hours: number, minutes: number): number {
  * Each minute = 6 degrees
  */
 export function minuteToAngle(minutes: number): number {
-  return minutes * 6;
+  return minutes * DEGREES_PER_MINUTE;
 }
 
 /**
@@ -66,9 +74,9 @@ export function minuteToAngle(minutes: number): number {
  */
 export function angleToHour(angle: number): number {
   // Normalize angle to 0-360
-  const normalized = ((angle % 360) + 360) % 360;
-  const hour = normalized / 30;
-  return hour === 0 ? 12 : hour;
+  const normalized = ((angle % DEGREES_IN_CIRCLE) + DEGREES_IN_CIRCLE) % DEGREES_IN_CIRCLE;
+  const hour = normalized / DEGREES_PER_HOUR;
+  return hour === 0 ? HOURS_ON_CLOCK : hour;
 }
 
 /**
@@ -76,8 +84,8 @@ export function angleToHour(angle: number): number {
  */
 export function angleToMinute(angle: number): number {
   // Normalize angle to 0-360
-  const normalized = ((angle % 360) + 360) % 360;
-  return Math.round(normalized / 6) % 60;
+  const normalized = ((angle % DEGREES_IN_CIRCLE) + DEGREES_IN_CIRCLE) % DEGREES_IN_CIRCLE;
+  return Math.round(normalized / DEGREES_PER_MINUTE) % MINUTES_IN_HOUR;
 }
 
 /**
@@ -94,11 +102,11 @@ export function calculateAngle(
 
   // atan2 returns angle from positive x-axis, counter-clockwise
   // We need angle from positive y-axis (12 o'clock), clockwise
-  let angle = Math.atan2(deltaX, -deltaY) * (180 / Math.PI);
+  let angle = Math.atan2(deltaX, -deltaY) * RADIANS_TO_DEGREES;
 
   // Normalize to 0-360
   if (angle < 0) {
-    angle += 360;
+    angle += DEGREES_IN_CIRCLE;
   }
 
   return angle;
@@ -108,7 +116,7 @@ export function calculateAngle(
  * Snap minutes to nearest 5-minute increment
  */
 export function snapToFiveMinutes(minutes: number): number {
-  return Math.round(minutes / 5) * 5;
+  return Math.round(minutes / SNAP_INCREMENT) * SNAP_INCREMENT;
 }
 
 /**

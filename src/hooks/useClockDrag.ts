@@ -90,47 +90,52 @@ export function useClockDrag({
   const handleMinuteStart = useCallback((e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    // Clear hour drag state to prevent simultaneous drags (mutex behavior)
+    setIsDraggingHour(false);
     setIsDraggingMinute(true);
   }, []);
 
   const handleHourStart = useCallback((e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    // Clear minute drag state to prevent simultaneous drags (mutex behavior)
+    setIsDraggingMinute(false);
     setIsDraggingHour(true);
   }, []);
 
-  // Add/remove event listeners for dragging
+  // Combined drag event listener management - ensures only one drag can be active at a time
   useEffect(() => {
-    if (isDraggingMinute) {
-      window.addEventListener('mousemove', handleMinuteMove);
-      window.addEventListener('mouseup', handleMinuteEnd);
-      window.addEventListener('touchmove', handleMinuteMove, { passive: false });
-      window.addEventListener('touchend', handleMinuteEnd);
+    // Determine which handler to use based on which drag is active
+    // Due to mutex behavior in start handlers, only one can be true at a time
+    const activeMove = isDraggingMinute ? handleMinuteMove : isDraggingHour ? handleHourMove : null;
+    const activeEnd = isDraggingMinute ? handleMinuteEnd : isDraggingHour ? handleHourEnd : null;
+
+    if (activeMove && activeEnd) {
+      window.addEventListener('mousemove', activeMove);
+      window.addEventListener('mouseup', activeEnd);
+      window.addEventListener('touchmove', activeMove, { passive: false });
+      window.addEventListener('touchend', activeEnd);
     }
 
     return () => {
+      // Clean up all possible listeners to ensure no orphaned handlers
       window.removeEventListener('mousemove', handleMinuteMove);
       window.removeEventListener('mouseup', handleMinuteEnd);
       window.removeEventListener('touchmove', handleMinuteMove);
       window.removeEventListener('touchend', handleMinuteEnd);
-    };
-  }, [isDraggingMinute, handleMinuteMove, handleMinuteEnd]);
-
-  useEffect(() => {
-    if (isDraggingHour) {
-      window.addEventListener('mousemove', handleHourMove);
-      window.addEventListener('mouseup', handleHourEnd);
-      window.addEventListener('touchmove', handleHourMove, { passive: false });
-      window.addEventListener('touchend', handleHourEnd);
-    }
-
-    return () => {
       window.removeEventListener('mousemove', handleHourMove);
       window.removeEventListener('mouseup', handleHourEnd);
       window.removeEventListener('touchmove', handleHourMove);
       window.removeEventListener('touchend', handleHourEnd);
     };
-  }, [isDraggingHour, handleHourMove, handleHourEnd]);
+  }, [
+    isDraggingMinute,
+    isDraggingHour,
+    handleMinuteMove,
+    handleMinuteEnd,
+    handleHourMove,
+    handleHourEnd,
+  ]);
 
   return {
     isDraggingMinute,

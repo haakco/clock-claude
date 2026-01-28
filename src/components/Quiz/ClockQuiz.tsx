@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useCallback, useRef } from 'react';
 import { useQuiz } from '../../hooks/useQuiz';
 import { useSound } from '../../hooks/useSound';
 import { useThemeStore } from '../../stores/themeStore';
@@ -6,10 +7,16 @@ import { getTheme } from '../../themes';
 import { QuizCard } from './QuizCard';
 import { WordProblem } from './WordProblem';
 
+// Simple skeleton for loading state
+function QuizSkeleton({ color }: { color: string }) {
+  return <div className="h-48 rounded-2xl animate-pulse" style={{ background: `${color}20` }} />;
+}
+
 export function ClockQuiz() {
   const theme = useThemeStore((state) => state.theme);
   const colors = getTheme(theme).colors;
   const { playSound } = useSound();
+  const lastRefreshTime = useRef(0);
 
   const {
     quizQuestions,
@@ -21,10 +28,17 @@ export function ClockQuiz() {
     refreshWordProblem,
   } = useQuiz();
 
-  const handleRefresh = () => {
+  // Debounce refresh to prevent rapid clicking (300ms minimum between refreshes)
+  const handleRefresh = useCallback(() => {
+    const now = Date.now();
+    if (now - lastRefreshTime.current < 300) return;
+    lastRefreshTime.current = now;
+
     playSound('whoosh');
     refreshQuestions();
-  };
+  }, [playSound, refreshQuestions]);
+
+  const isLoading = quizQuestions.length === 0;
 
   return (
     <div className="space-y-6">
@@ -49,14 +63,17 @@ export function ClockQuiz() {
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {quizQuestions.map((question) => (
-            <QuizCard
-              key={question.id}
-              question={question}
-              onAnswer={checkQuizAnswer}
-              onNext={() => refreshSingleQuestion(question.id)}
-            />
-          ))}
+          {isLoading
+            ? // Show skeletons while loading
+              [0, 1, 2].map((i) => <QuizSkeleton key={i} color={colors.primary} />)
+            : quizQuestions.map((question) => (
+                <QuizCard
+                  key={question.id}
+                  question={question}
+                  onAnswer={checkQuizAnswer}
+                  onNext={() => refreshSingleQuestion(question.id)}
+                />
+              ))}
         </div>
       </div>
 

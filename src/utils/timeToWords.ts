@@ -42,10 +42,13 @@ function getNextHour(hour: number): number {
 }
 
 /**
- * Pick a random item from an array
+ * Pick a deterministic item from an array based on a seed value.
+ * This ensures SSR and client hydration produce the same result.
  */
-function randomPick<T>(arr: T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)];
+function deterministicPick<T>(arr: T[], seed: number): T {
+  // Use a simple hash to get a stable index from the seed
+  const index = Math.abs(seed) % arr.length;
+  return arr[index];
 }
 
 /**
@@ -64,12 +67,15 @@ function getPeriodPhrase(hours: number, period: 'AM' | 'PM'): string {
 }
 
 /**
- * Convert a time to English words with random variety
+ * Convert a time to English words with variety.
+ * Uses deterministic selection based on time value to ensure SSR/hydration consistency.
  */
 export function timeToWords(time: Time, includePeriod = false): string {
   const { hours, minutes, period } = time;
   const hourWord = numberWords[hours];
   const periodPhrase = includePeriod ? ` ${getPeriodPhrase(hours, period)}` : '';
+  // Create a seed from time components for deterministic phrase selection
+  const seed = hours * 100 + minutes + (period === 'PM' ? 1000 : 0);
 
   // On the hour
   if (minutes === 0) {
@@ -79,7 +85,7 @@ export function timeToWords(time: Time, includePeriod = false): string {
       `${hourWord} on the dot`,
       `precisely ${hourWord} o'clock`,
     ];
-    return randomPick(phrases) + periodPhrase;
+    return deterministicPick(phrases, seed) + periodPhrase;
   }
 
   // Quarter past
@@ -90,7 +96,7 @@ export function timeToWords(time: Time, includePeriod = false): string {
       `fifteen past ${hourWord}`,
       `${hourWord} fifteen`,
     ];
-    return randomPick(phrases) + periodPhrase;
+    return deterministicPick(phrases, seed) + periodPhrase;
   }
 
   // Half past
@@ -101,7 +107,7 @@ export function timeToWords(time: Time, includePeriod = false): string {
       `thirty past ${hourWord}`,
       `halfway past ${hourWord}`,
     ];
-    return randomPick(phrases) + periodPhrase;
+    return deterministicPick(phrases, seed) + periodPhrase;
   }
 
   // Quarter to
@@ -113,7 +119,7 @@ export function timeToWords(time: Time, includePeriod = false): string {
       `fifteen to ${nextHourWord}`,
       `${hourWord} forty-five`,
     ];
-    return randomPick(phrases) + periodPhrase;
+    return deterministicPick(phrases, seed) + periodPhrase;
   }
 
   // Minutes past (1-30)
@@ -125,7 +131,7 @@ export function timeToWords(time: Time, includePeriod = false): string {
         `${minuteWord} after ${hourWord}`,
         `${hourWord} ${minuteWord.replace('-', ' ')}`,
       ];
-      return randomPick(phrases) + periodPhrase;
+      return deterministicPick(phrases, seed) + periodPhrase;
     }
     return `${minutes} past ${hourWord}${periodPhrase}`;
   }
@@ -141,7 +147,7 @@ export function timeToWords(time: Time, includePeriod = false): string {
         `${minuteWord} before ${nextHourWord}`,
         `${minuteWord} until ${nextHourWord}`,
       ];
-      return randomPick(phrases) + periodPhrase;
+      return deterministicPick(phrases, seed) + periodPhrase;
     }
     return `${minutesTo} to ${nextHourWord}${periodPhrase}`;
   }

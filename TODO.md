@@ -226,6 +226,53 @@ _Reference: [Testing Strategy](docs/plan.md#testing-strategy)_
 
 ---
 
+## Phase 9: Performance & Quality Improvements
+_Reference: [2026-01-28 Improvements Plan](docs/plans/2026-01-28-improvements-plan.md)_
+
+### Vike Migration (Faster Initial Load)
+- [ ] Install Vike and dependencies
+- [ ] Create page structure (`/pages/index/+Page.tsx`)
+- [ ] Configure pre-rendering
+- [ ] Update vite.config.ts for Vike
+- [ ] Ensure SSR compatibility
+- [ ] Update build scripts
+- [ ] Test pre-rendered output
+- [ ] Verify hydration
+
+### Kokoro TTS (Better Voice Quality)
+- [ ] Create `useKokoroTTS` hook
+- [ ] Create voice quality toggle button
+- [ ] Create voice selector (Sunny, George, Emma)
+- [ ] Update `useSpeech` hook with Kokoro routing
+- [ ] Add download prompt (~87MB)
+- [ ] Add progress indicator
+- [ ] Implement silent fallback to Web Speech API
+- [ ] Persist voice preferences
+
+### UI Improvements (Difficulty Button)
+- [ ] Add border + shadow to DifficultySelector
+- [ ] Add cycle icon (↻)
+- [ ] Add "Tap to change" tooltip
+
+---
+
+## Phase 10: Bug Fixes (Code Review)
+_Reference: [2026-01-28 Improvements Plan](docs/plans/2026-01-28-improvements-plan.md#phase-4-bug-fixes-code-review-issues)_
+
+### Critical
+- [ ] Fix memory leak in AudioContext (`useSound.ts`)
+- [ ] Fix race condition in drag handlers (`useClockDrag.ts`)
+
+### High Severity
+- [ ] Add Error Boundary component
+- [ ] Add keyboard/accessibility support (AnalogClock, WheelPicker)
+- [ ] Fix speech voice race condition (`useSpeech.ts`)
+- [ ] Fix store synchronization risk (`useQuiz.ts`)
+- [ ] Fix type safety gap (`TimeInput.tsx`)
+- [ ] Fix WheelPicker scroll race condition
+
+---
+
 ## Future Enhancements (Out of Scope)
 _Reference: [Future Enhancements](docs/plan.md#future-enhancements)_
 
@@ -240,4 +287,4 @@ These are documented for future consideration but not part of initial release:
 - [ ] Custom theme builder
 - [ ] Multiplayer mode
 - [ ] Additional quiz types
-- [ ] Accessibility improvements (screen reader, keyboard nav)
+- [x] Accessibility improvements (screen reader, keyboard nav) - Moved to Phase 10

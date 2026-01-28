@@ -5,6 +5,10 @@ interface ClockFaceProps {
   size: number;
 }
 
+// Round to 2 decimal places to prevent SSR hydration mismatches
+// from floating-point precision differences between server and client
+const round = (n: number) => Math.round(n * 100) / 100;
+
 export function ClockFace({ size }: ClockFaceProps) {
   const theme = useThemeStore((state) => state.theme);
   const colors = getTheme(theme).colors;
@@ -17,8 +21,8 @@ export function ClockFace({ size }: ClockFaceProps) {
   const numbers = Array.from({ length: 12 }, (_, i) => {
     const number = i + 1;
     const angle = (number * 30 - 90) * (Math.PI / 180);
-    const x = center + numberRadius * Math.cos(angle);
-    const y = center + numberRadius * Math.sin(angle);
+    const x = round(center + numberRadius * Math.cos(angle));
+    const y = round(center + numberRadius * Math.sin(angle));
     return { number, x, y };
   });
 
@@ -30,10 +34,10 @@ export function ClockFace({ size }: ClockFaceProps) {
     const innerRadius = isHour ? radius - 20 : radius - 12;
 
     return {
-      x1: center + innerRadius * Math.cos(angle),
-      y1: center + innerRadius * Math.sin(angle),
-      x2: center + outerRadius * Math.cos(angle),
-      y2: center + outerRadius * Math.sin(angle),
+      x1: round(center + innerRadius * Math.cos(angle)),
+      y1: round(center + innerRadius * Math.sin(angle)),
+      x2: round(center + outerRadius * Math.cos(angle)),
+      y2: round(center + outerRadius * Math.sin(angle)),
       isHour,
     };
   });

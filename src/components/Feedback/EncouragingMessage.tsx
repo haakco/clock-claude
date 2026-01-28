@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { useGameStore } from '../../stores/gameStore';
 import { useThemeStore } from '../../stores/themeStore';
 import { getTheme } from '../../themes';
@@ -26,7 +27,12 @@ export function EncouragingMessage() {
   else if (streak >= 3) messageType = 'streak3';
   else if (streak >= 1) messageType = 'streak1';
 
-  const message = getRandomMessage(messages[messageType]);
+  // Use first message for SSR, then randomize on client to avoid hydration mismatch
+  const [message, setMessage] = useState(messages[messageType][0]);
+
+  useEffect(() => {
+    setMessage(getRandomMessage(messages[messageType]));
+  }, [messageType]);
 
   return (
     <AnimatePresence mode="wait">
