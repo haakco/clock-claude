@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { RefreshCw } from 'lucide-react';
 import { useGameStore } from '../../stores/gameStore';
 import type { Difficulty } from '../../types';
 
@@ -27,11 +28,11 @@ export function DifficultySelector() {
 
   return (
     <motion.button
-      className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 text-white font-bold"
+      className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 text-white font-bold border-2 border-white/40 shadow-md"
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       onClick={handleCycle}
-      title="Click to change difficulty"
+      title="Tap to change difficulty"
     >
       <motion.span
         key={difficulty}
@@ -42,6 +43,7 @@ export function DifficultySelector() {
         {difficultyEmojis[difficulty]}
       </motion.span>
       <span className="hidden sm:inline">{difficultyLabels[difficulty]}</span>
+      <RefreshCw size={14} className="opacity-60" />
     </motion.button>
   );
 }

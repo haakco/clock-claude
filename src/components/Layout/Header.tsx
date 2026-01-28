@@ -6,6 +6,7 @@ import { getTheme } from '../../themes';
 import { DifficultySelector } from './DifficultySelector';
 import { ScoreDisplay } from './ScoreDisplay';
 import { ThemeToggle } from './ThemeToggle';
+import { VoiceQualityToggle } from './VoiceQualityToggle';
 
 export function Header() {
   const theme = useThemeStore((state) => state.theme);
@@ -46,6 +47,9 @@ export function Header() {
             >
               {soundEnabled ? <Volume2 size={24} /> : <VolumeX size={24} />}
             </motion.button>
+
+            {/* Voice quality toggle */}
+            <VoiceQualityToggle />
 
             <ThemeToggle />
           </div>

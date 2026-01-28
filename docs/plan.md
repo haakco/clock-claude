@@ -63,7 +63,8 @@ A web-based interactive clock game designed to help children aged 6-8 learn to t
 | **Confetti** | canvas-confetti | Celebration effects |
 | **Icons** | Lucide React | Clean, customizable icons |
 | **Wheel Picker** | Custom component | Apple-style scroll wheel input |
-| **Text-to-Speech** | Web Speech API | Native browser speech synthesis |
+| **Text-to-Speech** | Web Speech API + Kokoro | Native fallback + neural TTS option |
+| **Pre-rendering** | Vike | SSG for faster initial load |
 | **Deployment** | GitHub Pages | Free, easy CI/CD integration |
 
 ---

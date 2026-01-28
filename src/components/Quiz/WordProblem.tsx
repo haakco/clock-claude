@@ -22,7 +22,7 @@ export function WordProblem({ problem, onAnswer, onNext }: WordProblemProps) {
   const { speak } = useSpeech();
 
   const handleSpeakQuestion = useCallback(() => {
-    speak(`What time is ${problem.timeInWords}?`);
+    speak(`Set the time to match ${problem.timeInWords}`);
   }, [speak, problem.timeInWords]);
 
   const { userAnswer, setUserAnswer, showResult, isCorrect, handleCheck, handleNext } =
@@ -55,7 +55,7 @@ export function WordProblem({ problem, onAnswer, onNext }: WordProblemProps) {
       >
         <div className="flex items-center justify-center gap-2 mb-2">
           <p className="text-lg font-medium" style={{ color: colors.secondary }}>
-            What time is
+            Set the time to match
           </p>
           <motion.button
             className="p-1.5 rounded-full"

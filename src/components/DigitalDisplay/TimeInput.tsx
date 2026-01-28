@@ -22,15 +22,29 @@ export function TimeInput({ value, onChange, showPeriod = true, compact = false 
   const itemHeight = compact ? 36 : 40;
 
   const handleHourChange = (hour: string) => {
-    onChange({ ...value, hours: parseInt(hour, 10) });
+    const parsed = parseInt(hour, 10);
+    // Clamp hours to valid 12-hour range (1-12)
+    const hours = Number.isNaN(parsed) ? 12 : Math.max(1, Math.min(12, parsed));
+    onChange({ ...value, hours });
   };
 
   const handleMinuteChange = (minute: string) => {
-    onChange({ ...value, minutes: parseInt(minute, 10) });
+    const parsed = parseInt(minute, 10);
+    // Clamp minutes to valid range (0-59)
+    const minutes = Number.isNaN(parsed) ? 0 : Math.max(0, Math.min(59, parsed));
+    onChange({ ...value, minutes });
   };
 
   const handlePeriodChange = (period: string) => {
-    onChange({ ...value, period: period as 'AM' | 'PM' });
+    // Strict type guard: only accept exactly 'AM' or 'PM'
+    const isValidPeriod = (p: string): p is 'AM' | 'PM' => p === 'AM' || p === 'PM';
+
+    if (isValidPeriod(period)) {
+      onChange({ ...value, period });
+    } else {
+      // Default to AM for any invalid input
+      onChange({ ...value, period: 'AM' });
+    }
   };
 
   return (

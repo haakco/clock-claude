@@ -1,27 +1,20 @@
 import { motion } from 'framer-motion';
-import { useEffect } from 'react';
-import { AnalogClock } from './components/Clock';
-import { BlueThemeDecorations, PinkThemeDecorations } from './components/Decorations';
-import { TimeDisplayInput } from './components/DigitalDisplay';
-import { EncouragingMessage } from './components/Feedback';
-import { Header } from './components/Layout';
-import { ClockQuiz } from './components/Quiz';
-import { useTime } from './hooks/useTime';
-import { useGameStore } from './stores/gameStore';
-import { useThemeStore } from './stores/themeStore';
-import { getTheme } from './themes';
+import { AnalogClock } from '../../src/components/Clock';
+import { BlueThemeDecorations, PinkThemeDecorations } from '../../src/components/Decorations';
+import { TimeDisplayInput } from '../../src/components/DigitalDisplay';
+import { EncouragingMessage } from '../../src/components/Feedback';
+import { Header } from '../../src/components/Layout';
+import { ClockQuiz } from '../../src/components/Quiz';
+import { useTime } from '../../src/hooks/useTime';
+import { useThemeStore } from '../../src/stores/themeStore';
+import { getTheme } from '../../src/themes';
 
-function App() {
+export default function Page() {
   const theme = useThemeStore((state) => state.theme);
   const colors = getTheme(theme).colors;
-  const { generateNewQuizQuestions, generateNewWordProblem } = useGameStore();
   const { time, setFullTime } = useTime();
 
-  // Initialize quiz on mount
-  useEffect(() => {
-    generateNewQuizQuestions();
-    generateNewWordProblem();
-  }, [generateNewQuizQuestions, generateNewWordProblem]);
+  // Quiz initialization is handled by useQuiz hook in ClockQuiz component
 
   return (
     <div
@@ -77,10 +70,10 @@ function App() {
                 How to Play
               </h2>
               <div className="text-base space-y-1" style={{ color: colors.secondary }}>
-                <p>👆 Drag the clock hands to change the time</p>
-                <p>🎯 Look at the small clocks and enter the time shown</p>
-                <p>📝 Read the word puzzles and enter the matching time</p>
-                <p>⭐ Get points for each correct answer!</p>
+                <p>Drag the clock hands to change the time</p>
+                <p>Look at the small clocks and enter the time shown</p>
+                <p>Read the word puzzles and enter the matching time</p>
+                <p>Get points for each correct answer!</p>
               </div>
             </motion.div>
           </motion.div>
@@ -98,10 +91,8 @@ function App() {
 
       {/* Footer */}
       <footer className="text-center py-4 text-sm opacity-50" style={{ color: colors.secondary }}>
-        Learn to Tell Time - Made with ❤️ for kids
+        Learn to Tell Time - Made with love for kids
       </footer>
     </div>
   );
 }
-
-export default App;

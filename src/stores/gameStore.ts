@@ -4,6 +4,19 @@ import type { Difficulty, QuizQuestion, Time, WordProblem } from '../types';
 import { generateQuizTime } from '../utils/generateQuizTime';
 import { timeToWords } from '../utils/timeToWords';
 
+// Fallback for browsers without crypto.randomUUID (older Safari, etc.)
+const generateId = (): string => {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  // Fallback using Math.random - less random but sufficient for quiz IDs
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+};
+
 interface GameState {
   // Current time on main clock
   currentTime: Time;
@@ -44,7 +57,7 @@ interface GameState {
 const createQuizQuestion = (difficulty: Difficulty): QuizQuestion => {
   const time = generateQuizTime(difficulty);
   return {
-    id: crypto.randomUUID(),
+    id: generateId(),
     time,
     answered: false,
     correct: null,
@@ -55,7 +68,7 @@ const createWordProblem = (difficulty: Difficulty): WordProblem => {
   const time = generateQuizTime(difficulty);
   // Include period phrases like "in the afternoon" for more natural questions
   return {
-    id: crypto.randomUUID(),
+    id: generateId(),
     timeInWords: timeToWords(time, true),
     correctTime: time,
     answered: false,

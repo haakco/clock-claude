@@ -11,9 +11,14 @@ import { ClockHand } from './ClockHand';
 interface AnalogClockProps {
   size?: number;
   interactive?: boolean;
+  snapToFive?: boolean;
 }
 
-export function AnalogClock({ size = 300, interactive = true }: AnalogClockProps) {
+export function AnalogClock({
+  size = 300,
+  interactive = true,
+  snapToFive = false,
+}: AnalogClockProps) {
   const theme = useThemeStore((state) => state.theme);
   const colors = getTheme(theme).colors;
   const { hourAngle, minuteAngle, setMinutes, setHours } = useTime();
@@ -35,7 +40,7 @@ export function AnalogClock({ size = 300, interactive = true }: AnalogClockProps
     useClockDrag({
       onMinuteChange: handleMinuteChange,
       onHourChange: handleHourChange,
-      snapToFive: false,
+      snapToFive,
     });
 
   // Sync dragging state to game store for text display

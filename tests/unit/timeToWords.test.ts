@@ -2,6 +2,37 @@ import { describe, expect, it } from 'vitest';
 import { timeToWords, wordsToTime } from '../../src/utils/timeToWords';
 
 describe('timeToWords', () => {
+  describe('deterministic behavior', () => {
+    it('returns the same result for multiple calls with the same input', () => {
+      // Test that the function is deterministic for SSR/hydration consistency
+      const input = { hours: 3, minutes: 15, period: 'PM' as const };
+      const results = Array.from({ length: 10 }, () => timeToWords(input));
+
+      // All results should be identical
+      const firstResult = results[0];
+      for (const result of results) {
+        expect(result).toBe(firstResult);
+      }
+    });
+
+    it('is deterministic across different time values', () => {
+      const testCases = [
+        { hours: 12, minutes: 0, period: 'AM' as const },
+        { hours: 6, minutes: 30, period: 'PM' as const },
+        { hours: 9, minutes: 45, period: 'AM' as const },
+        { hours: 2, minutes: 20, period: 'PM' as const },
+      ];
+
+      for (const input of testCases) {
+        const results = Array.from({ length: 5 }, () => timeToWords(input));
+        const firstResult = results[0];
+        for (const result of results) {
+          expect(result).toBe(firstResult);
+        }
+      }
+    });
+  });
+
   describe("o'clock times", () => {
     it('converts 3:00 to one of the valid phrases', () => {
       const validPhrases = [

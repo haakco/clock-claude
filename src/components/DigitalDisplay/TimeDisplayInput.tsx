@@ -101,24 +101,34 @@ export function TimeDisplayInput({ time, onChange, showWords = true }: TimeDispl
     speakTime24(displayTime.hours, displayTime.minutes, displayTime.period);
   }, [speakTime24, displayTime.hours, displayTime.minutes, displayTime.period]);
 
-  // Convert 24h value to 12h for storage
+  // Convert 24h value to 12h for storage with validation
   const handleHour24Change = (hour24: string) => {
-    const h = parseInt(hour24, 10);
+    const parsed = parseInt(hour24, 10);
+    // Clamp to valid 24-hour range (0-23)
+    const h = Number.isNaN(parsed) ? 0 : Math.max(0, Math.min(23, parsed));
     const newPeriod: 'AM' | 'PM' = h < 12 ? 'AM' : 'PM';
     const newHour = h === 0 ? 12 : h > 12 ? h - 12 : h;
     onChange({ ...time, hours: newHour, period: newPeriod });
   };
 
   const handleHour12Change = (hour: string) => {
-    onChange({ ...time, hours: parseInt(hour, 10) });
+    const parsed = parseInt(hour, 10);
+    // Clamp to valid 12-hour range (1-12)
+    const hours = Number.isNaN(parsed) ? 12 : Math.max(1, Math.min(12, parsed));
+    onChange({ ...time, hours });
   };
 
   const handleMinuteChange = (minute: string) => {
-    onChange({ ...time, minutes: parseInt(minute, 10) });
+    const parsed = parseInt(minute, 10);
+    // Clamp to valid minute range (0-59)
+    const minutes = Number.isNaN(parsed) ? 0 : Math.max(0, Math.min(59, parsed));
+    onChange({ ...time, minutes });
   };
 
   const handlePeriodChange = (period: string) => {
-    onChange({ ...time, period: period as 'AM' | 'PM' });
+    // Validate period is AM or PM, default to AM if invalid
+    const validPeriod = period === 'PM' ? 'PM' : 'AM';
+    onChange({ ...time, period: validPeriod });
   };
 
   // Get current 24h value for picker

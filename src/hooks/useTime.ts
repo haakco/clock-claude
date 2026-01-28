@@ -7,11 +7,14 @@ export function useTime() {
   const currentTime = useGameStore((state) => state.currentTime);
   const setCurrentTime = useGameStore((state) => state.setCurrentTime);
 
+  // Use getState() to read current time at execution time, not callback creation time.
+  // This keeps callbacks stable and prevents recreation on every time change.
   const setMinutes = useCallback(
     (minutes: number) => {
+      const time = useGameStore.getState().currentTime;
       // Calculate how the hour hand should move based on minute change
-      const oldMinutes = currentTime.minutes;
-      let newHours = currentTime.hours;
+      const oldMinutes = time.minutes;
+      let newHours = time.hours;
 
       // If we cross over 0/60, adjust the hour
       if (oldMinutes > 45 && minutes < 15) {
@@ -23,32 +26,34 @@ export function useTime() {
       }
 
       setCurrentTime({
-        ...currentTime,
+        ...time,
         hours: newHours,
         minutes,
       });
     },
-    [currentTime, setCurrentTime]
+    [setCurrentTime]
   );
 
   const setHours = useCallback(
     (hours: number) => {
+      const time = useGameStore.getState().currentTime;
       setCurrentTime({
-        ...currentTime,
+        ...time,
         hours,
       });
     },
-    [currentTime, setCurrentTime]
+    [setCurrentTime]
   );
 
   const setPeriod = useCallback(
     (period: 'AM' | 'PM') => {
+      const time = useGameStore.getState().currentTime;
       setCurrentTime({
-        ...currentTime,
+        ...time,
         period,
       });
     },
-    [currentTime, setCurrentTime]
+    [setCurrentTime]
   );
 
   const setFullTime = useCallback(
