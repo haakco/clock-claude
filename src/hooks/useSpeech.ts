@@ -20,6 +20,8 @@ function initVoices(): void {
     cachedVoices = speechSynthesis.getVoices();
     if (cachedVoices.length > 0) {
       voicesLoaded = true;
+      // Remove listener once voices are loaded to avoid memory leak
+      speechSynthesis.removeEventListener('voiceschanged', loadVoices);
     }
   };
 
@@ -236,6 +238,7 @@ export function useSpeech() {
     kokoroDownloaded: kokoro.isDownloaded,
     kokoroLoading: kokoro.isLoading,
     kokoroProgress: kokoro.loadProgress,
+    kokoroError: kokoro.error,
     loadKokoro: kokoro.loadKokoro,
   };
 }

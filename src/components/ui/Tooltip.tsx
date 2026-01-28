@@ -1,8 +1,9 @@
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
-import type { ReactNode } from 'react';
+import type { ReactElement } from 'react';
 
 interface TooltipProps {
-  children: ReactNode;
+  /** Must be a single React element (Trigger uses asChild) */
+  children: ReactElement;
   content: string;
   side?: 'top' | 'right' | 'bottom' | 'left';
   delayDuration?: number;

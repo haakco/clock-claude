@@ -21,6 +21,10 @@ interface KokoroTTSState {
 let kokoroInstance: unknown = null;
 let kokoroLoadPromise: Promise<unknown> | null = null;
 
+// Global speaking state to prevent overlapping audio across components
+let globalIsSpeaking = false;
+let globalAudioElement: HTMLAudioElement | null = null;
+
 /**
  * Check if Kokoro TTS is currently loaded and ready to use.
  * This checks the global instance directly for cross-component consistency.
@@ -55,8 +59,8 @@ export function useKokoroTTS() {
     error: null,
   });
 
-  const isSpeakingRef = useRef(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  // Track the current blob URL for cleanup
+  const currentBlobUrlRef = useRef<string | null>(null);
 
   // Initialize state from localStorage on mount
   useEffect(() => {
@@ -158,14 +162,15 @@ export function useKokoroTTS() {
   }, []);
 
   /**
-   * Generate and play speech using Kokoro TTS with Sunny voice
+   * Generate and play speech using Kokoro TTS with Sunny voice.
+   * Uses global speaking state to prevent overlapping audio across components.
    */
   const speak = useCallback(async (text: string): Promise<boolean> => {
-    if (!kokoroInstance || isSpeakingRef.current) {
+    if (!kokoroInstance || globalIsSpeaking) {
       return false;
     }
 
-    isSpeakingRef.current = true;
+    globalIsSpeaking = true;
 
     try {
       // Generate audio with Sunny voice
@@ -177,40 +182,48 @@ export function useKokoroTTS() {
       // Create blob and play
       const blob = audio.toBlob();
       const url = URL.createObjectURL(blob);
+      currentBlobUrlRef.current = url;
 
-      // Clean up previous audio
-      if (audioRef.current) {
-        audioRef.current.pause();
-        if (audioRef.current.src.startsWith('blob:')) {
-          URL.revokeObjectURL(audioRef.current.src);
-        }
+      // Clean up previous global audio
+      if (globalAudioElement) {
+        globalAudioElement.pause();
       }
 
       // Create new audio element
-      audioRef.current = new Audio(url);
+      globalAudioElement = new Audio(url);
 
       await new Promise<void>((resolve, reject) => {
-        if (!audioRef.current) {
+        if (!globalAudioElement) {
           reject(new Error('Audio element not created'));
           return;
         }
 
-        audioRef.current.onended = () => {
-          isSpeakingRef.current = false;
+        globalAudioElement.onended = () => {
+          globalIsSpeaking = false;
+          // Revoke blob URL to prevent memory leak
+          if (currentBlobUrlRef.current) {
+            URL.revokeObjectURL(currentBlobUrlRef.current);
+            currentBlobUrlRef.current = null;
+          }
           resolve();
         };
 
-        audioRef.current.onerror = () => {
-          isSpeakingRef.current = false;
+        globalAudioElement.onerror = () => {
+          globalIsSpeaking = false;
+          // Revoke blob URL on error too
+          if (currentBlobUrlRef.current) {
+            URL.revokeObjectURL(currentBlobUrlRef.current);
+            currentBlobUrlRef.current = null;
+          }
           reject(new Error('Audio playback failed'));
         };
 
-        audioRef.current.play().catch(reject);
+        globalAudioElement.play().catch(reject);
       });
 
       return true;
     } catch (_error) {
-      isSpeakingRef.current = false;
+      globalIsSpeaking = false;
       return false;
     }
   }, []);
@@ -219,21 +232,24 @@ export function useKokoroTTS() {
    * Stop current speech
    */
   const stop = useCallback(() => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
+    if (globalAudioElement) {
+      globalAudioElement.pause();
+      globalAudioElement.currentTime = 0;
     }
-    isSpeakingRef.current = false;
+    globalIsSpeaking = false;
+    // Clean up blob URL
+    if (currentBlobUrlRef.current) {
+      URL.revokeObjectURL(currentBlobUrlRef.current);
+      currentBlobUrlRef.current = null;
+    }
   }, []);
 
-  // Cleanup on unmount
+  // Cleanup blob URL on unmount (global audio is shared, so don't stop it)
   useEffect(() => {
     return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        if (audioRef.current.src.startsWith('blob:')) {
-          URL.revokeObjectURL(audioRef.current.src);
-        }
+      if (currentBlobUrlRef.current) {
+        URL.revokeObjectURL(currentBlobUrlRef.current);
+        currentBlobUrlRef.current = null;
       }
     };
   }, []);

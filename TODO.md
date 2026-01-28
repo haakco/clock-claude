@@ -287,4 +287,4 @@ These are documented for future consideration but not part of initial release:
 - [ ] Custom theme builder
 - [ ] Multiplayer mode
 - [ ] Additional quiz types
-- [x] Accessibility improvements (screen reader, keyboard nav) - Moved to Phase 10
+- [ ] Accessibility improvements (screen reader, keyboard nav) - Moved to Phase 10

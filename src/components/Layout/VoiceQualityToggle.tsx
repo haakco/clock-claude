@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { Download, Loader2, Sparkles } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { AlertCircle, Download, Loader2, Sparkles } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import { KOKORO_MODEL_SIZE_MB } from '../../hooks/useKokoroTTS';
 import { useSpeech } from '../../hooks/useSpeech';
 import { useThemeStore } from '../../stores/themeStore';
@@ -81,21 +81,41 @@ function DownloadModal({ isOpen, onConfirm, onCancel, isLoading, progress }: Dow
 }
 
 export function VoiceQualityToggle() {
-  const { kokoroAvailable, kokoroDownloaded, kokoroLoading, kokoroProgress, loadKokoro } =
-    useSpeech();
+  const {
+    kokoroAvailable,
+    kokoroDownloaded,
+    kokoroLoading,
+    kokoroProgress,
+    kokoroError,
+    loadKokoro,
+  } = useSpeech();
   const [showModal, setShowModal] = useState(false);
   const theme = useThemeStore((state) => state.theme);
   const colors = getTheme(theme).colors;
 
-  // Auto-load Kokoro if already downloaded
+  // One-shot guard to prevent infinite auto-load retry loop
+  const autoLoadAttemptedRef = useRef(false);
+
+  // Auto-load Kokoro if already downloaded (one-shot, stops on error)
   useEffect(() => {
-    if (kokoroDownloaded && !kokoroAvailable && !kokoroLoading) {
+    if (
+      kokoroDownloaded &&
+      !kokoroAvailable &&
+      !kokoroLoading &&
+      !kokoroError &&
+      !autoLoadAttemptedRef.current
+    ) {
+      autoLoadAttemptedRef.current = true;
       loadKokoro();
     }
-  }, [kokoroDownloaded, kokoroAvailable, kokoroLoading, loadKokoro]);
+  }, [kokoroDownloaded, kokoroAvailable, kokoroLoading, kokoroError, loadKokoro]);
 
   const handleClick = () => {
-    if (!kokoroDownloaded && !kokoroLoading) {
+    if (kokoroError) {
+      // Allow retry on error - reset the one-shot guard
+      autoLoadAttemptedRef.current = false;
+      loadKokoro();
+    } else if (!kokoroDownloaded && !kokoroLoading) {
       // Not downloaded - show confirmation modal
       setShowModal(true);
     }
@@ -114,16 +134,22 @@ export function VoiceQualityToggle() {
   // Determine icon and tooltip based on state
   let Icon = Download;
   let tooltip = 'Download better voice';
+  let isSpinning = false;
 
   if (kokoroLoading) {
     Icon = Loader2;
     tooltip = 'Downloading better voice...';
+    isSpinning = true;
+  } else if (kokoroError) {
+    Icon = AlertCircle;
+    tooltip = `Error: ${kokoroError}. Click to retry.`;
   } else if (kokoroAvailable) {
     Icon = Sparkles;
     tooltip = 'Better voice active';
   } else if (kokoroDownloaded) {
     Icon = Loader2;
     tooltip = 'Loading better voice...';
+    isSpinning = true;
   }
 
   // Show sparkles when active (non-interactive)
@@ -142,6 +168,9 @@ export function VoiceQualityToggle() {
     );
   }
 
+  // Button is disabled only while actively loading (not on error or when downloaded but failed)
+  const isDisabled = kokoroLoading || (kokoroDownloaded && !kokoroError && !kokoroAvailable);
+
   return (
     <>
       <Tooltip content={tooltip}>
@@ -150,9 +179,9 @@ export function VoiceQualityToggle() {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={handleClick}
-          disabled={kokoroLoading || kokoroDownloaded}
+          disabled={isDisabled}
         >
-          <Icon size={24} className={kokoroLoading || kokoroDownloaded ? 'animate-spin' : ''} />
+          <Icon size={24} className={isSpinning ? 'animate-spin' : ''} />
         </motion.button>
       </Tooltip>
 

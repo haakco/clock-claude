@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion';
-import { useEffect } from 'react';
 import { AnalogClock } from '../../src/components/Clock';
 import { BlueThemeDecorations, PinkThemeDecorations } from '../../src/components/Decorations';
 import { TimeDisplayInput } from '../../src/components/DigitalDisplay';
@@ -7,7 +6,6 @@ import { EncouragingMessage } from '../../src/components/Feedback';
 import { Header } from '../../src/components/Layout';
 import { ClockQuiz } from '../../src/components/Quiz';
 import { useTime } from '../../src/hooks/useTime';
-import { useGameStore } from '../../src/stores/gameStore';
 import { useThemeStore } from '../../src/stores/themeStore';
 import { getTheme } from '../../src/themes';
 
@@ -16,13 +14,7 @@ export default function Page() {
   const colors = getTheme(theme).colors;
   const { time, setFullTime } = useTime();
 
-  // Initialize quiz on mount - use getState() for one-time initialization
-  // to avoid dependency on store functions that could cause re-runs
-  useEffect(() => {
-    const store = useGameStore.getState();
-    store.generateNewQuizQuestions();
-    store.generateNewWordProblem();
-  }, []);
+  // Quiz initialization is handled by useQuiz hook in ClockQuiz component
 
   return (
     <div
