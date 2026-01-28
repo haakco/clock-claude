@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Difficulty, QuizQuestion, WordProblem, Time } from '../types';
+import type { Difficulty, QuizQuestion, Time, WordProblem } from '../types';
 import { generateQuizTime } from '../utils/generateQuizTime';
 import { timeToWords } from '../utils/timeToWords';
 
@@ -126,9 +126,7 @@ export const useGameStore = create<GameState>()(
       },
       answerWordProblem: (correct) => {
         set((state) => ({
-          wordProblem: state.wordProblem
-            ? { ...state.wordProblem, answered: true, correct }
-            : null,
+          wordProblem: state.wordProblem ? { ...state.wordProblem, answered: true, correct } : null,
         }));
         if (correct) {
           get().addPoints(1);

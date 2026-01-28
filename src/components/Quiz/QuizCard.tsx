@@ -1,12 +1,12 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import confetti from 'canvas-confetti';
-import { MiniClock } from '../Clock/MiniClock';
-import { TimeInput } from '../DigitalDisplay/TimeInput';
-import { QuizQuestion, Time } from '../../types';
+import { motion } from 'framer-motion';
+import { useQuizAnswer } from '../../hooks/useQuizAnswer';
 import { useThemeStore } from '../../stores/themeStore';
 import { getTheme } from '../../themes';
-import { useSound } from '../../hooks/useSound';
+import type { QuizQuestion, Time } from '../../types';
+import { MiniClock } from '../Clock/MiniClock';
+import { TimeInput } from '../DigitalDisplay/TimeInput';
+import { QuizActionButton } from './QuizActionButton';
+import { QuizAnswerSection } from './QuizAnswerSection';
 
 interface QuizCardProps {
   question: QuizQuestion;
@@ -17,40 +17,13 @@ interface QuizCardProps {
 export function QuizCard({ question, onAnswer, onNext }: QuizCardProps) {
   const theme = useThemeStore((state) => state.theme);
   const colors = getTheme(theme).colors;
-  const { playSound } = useSound();
 
-  const [userAnswer, setUserAnswer] = useState<Time>({
-    hours: 12,
-    minutes: 0,
-    period: 'AM',
-  });
-  const [showResult, setShowResult] = useState(false);
-  const [isCorrect, setIsCorrect] = useState(false);
-
-  const handleCheck = () => {
-    const correct = onAnswer(question.id, userAnswer);
-    setIsCorrect(correct);
-    setShowResult(true);
-
-    if (correct) {
-      playSound('correct');
-      // Fire confetti!
-      confetti({
-        particleCount: 50,
-        spread: 60,
-        origin: { y: 0.6 },
-        colors: [colors.primary, colors.accent, '#ffd700'],
-      });
-    } else {
-      playSound('incorrect');
-    }
-  };
-
-  const handleNext = () => {
-    setShowResult(false);
-    setUserAnswer({ hours: 12, minutes: 0, period: 'AM' });
-    onNext();
-  };
+  const { userAnswer, setUserAnswer, showResult, isCorrect, handleCheck, handleNext } =
+    useQuizAnswer({
+      onAnswer: (answer) => onAnswer(question.id, answer),
+      onNext,
+      confettiColors: [colors.primary, colors.accent, '#ffd700'],
+    });
 
   return (
     <motion.div
@@ -69,63 +42,38 @@ export function QuizCard({ question, onAnswer, onNext }: QuizCardProps) {
       />
 
       {/* Answer input or result */}
-      <AnimatePresence mode="wait">
-        {!showResult ? (
-          <motion.div
-            key="input"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="w-full"
-          >
-            <TimeInput
-              value={userAnswer}
-              onChange={setUserAnswer}
-              showPeriod={false}
-              compact
-            />
-
-            <motion.button
-              className="w-full mt-3 py-3 rounded-xl font-bold text-white"
-              style={{ background: colors.primary }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+      <QuizAnswerSection
+        showResult={showResult}
+        inputClassName="w-full"
+        resultClassName="text-center w-full"
+        inputContent={
+          <>
+            <TimeInput value={userAnswer} onChange={setUserAnswer} showPeriod={false} compact />
+            <QuizActionButton
               onClick={handleCheck}
+              backgroundColor={colors.primary}
+              className="mt-3"
             >
               Check!
-            </motion.button>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="result"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            className="text-center w-full"
-          >
+            </QuizActionButton>
+          </>
+        }
+        resultContent={
+          <>
             {isCorrect ? (
-              <div className="text-green-500 text-2xl font-bold mb-2">
-                Correct! 🎉
-              </div>
+              <div className="text-green-500 text-2xl font-bold mb-2">Correct! 🎉</div>
             ) : (
               <div className="text-red-500 text-xl font-bold mb-2">
                 Try again! The answer is {question.time.hours}:
                 {String(question.time.minutes).padStart(2, '0')}
               </div>
             )}
-
-            <motion.button
-              className="w-full py-3 rounded-xl font-bold text-white"
-              style={{ background: colors.secondary }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={handleNext}
-            >
+            <QuizActionButton onClick={handleNext} backgroundColor={colors.secondary}>
               Next Question
-            </motion.button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </QuizActionButton>
+          </>
+        }
+      />
     </motion.div>
   );
 }

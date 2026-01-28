@@ -2,18 +2,13 @@ import { useCallback } from 'react';
 import { useGameStore } from '../stores/gameStore';
 
 // Check if speech synthesis is supported
-const isSpeechSupported =
-  typeof window !== 'undefined' && 'speechSynthesis' in window;
+const isSpeechSupported = typeof window !== 'undefined' && 'speechSynthesis' in window;
 
 /**
  * Pure function to format time as spoken text (12-hour format).
  * Extracted for testability.
  */
-export function formatTimeForSpeech(
-  hours: number,
-  minutes: number,
-  period: 'AM' | 'PM'
-): string {
+export function formatTimeForSpeech(hours: number, minutes: number, period: 'AM' | 'PM'): string {
   let timeText = '';
 
   if (minutes === 0) {
@@ -40,11 +35,7 @@ export function formatTimeForSpeech(
  * Pure function to format time as spoken text (24-hour/military format).
  * E.g., 15:00 → "fifteen hundred", 09:30 → "oh nine thirty"
  */
-export function formatTime24ForSpeech(
-  hours: number,
-  minutes: number,
-  period: 'AM' | 'PM'
-): string {
+export function formatTime24ForSpeech(hours: number, minutes: number, period: 'AM' | 'PM'): string {
   // Convert 12h to 24h
   let hour24 = hours;
   if (period === 'PM' && hours !== 12) hour24 = hours + 12;
@@ -122,9 +113,7 @@ export function useSpeech() {
       const preferredVoice = voices.find(
         (v) =>
           v.lang.startsWith('en') &&
-          (v.name.includes('Female') ||
-            v.name.includes('Samantha') ||
-            v.name.includes('Victoria'))
+          (v.name.includes('Female') || v.name.includes('Samantha') || v.name.includes('Victoria'))
       );
       if (preferredVoice) {
         utterance.voice = preferredVoice;

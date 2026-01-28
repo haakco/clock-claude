@@ -1,10 +1,10 @@
 import { motion } from 'framer-motion';
-import { QuizCard } from './QuizCard';
-import { WordProblem } from './WordProblem';
 import { useQuiz } from '../../hooks/useQuiz';
+import { useSound } from '../../hooks/useSound';
 import { useThemeStore } from '../../stores/themeStore';
 import { getTheme } from '../../themes';
-import { useSound } from '../../hooks/useSound';
+import { QuizCard } from './QuizCard';
+import { WordProblem } from './WordProblem';
 
 export function ClockQuiz() {
   const theme = useThemeStore((state) => state.theme);
@@ -44,10 +44,7 @@ export function ClockQuiz() {
 
       {/* Quiz clocks grid */}
       <div>
-        <h2
-          className="text-xl font-bold mb-4"
-          style={{ color: colors.secondary }}
-        >
+        <h2 className="text-xl font-bold mb-4" style={{ color: colors.secondary }}>
           What time is shown?
         </h2>
 

@@ -48,12 +48,7 @@ export function useSound() {
   }, []);
 
   const playTone = useCallback(
-    (
-      frequency: number,
-      duration: number,
-      type: OscillatorType = 'sine',
-      volume: number = 0.2
-    ) => {
+    (frequency: number, duration: number, type: OscillatorType = 'sine', volume: number = 0.2) => {
       if (!soundEnabled || !audioContextRef.current) return;
 
       const ctx = audioContextRef.current;

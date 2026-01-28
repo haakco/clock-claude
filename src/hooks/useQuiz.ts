@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import { useGameStore } from '../stores/gameStore';
-import { Time } from '../types';
+import type { Time } from '../types';
 
 export function useQuiz() {
   const {
@@ -23,12 +23,7 @@ export function useQuiz() {
     if (!wordProblem) {
       generateNewWordProblem();
     }
-  }, [
-    quizQuestions.length,
-    wordProblem,
-    generateNewQuizQuestions,
-    generateNewWordProblem,
-  ]);
+  }, [quizQuestions.length, wordProblem, generateNewQuizQuestions, generateNewWordProblem]);
 
   const checkQuizAnswer = useCallback(
     (questionId: string, userAnswer: Time): boolean => {
@@ -37,8 +32,7 @@ export function useQuiz() {
 
       // Compare hours and minutes only (ignore AM/PM for quiz)
       const correct =
-        question.time.hours === userAnswer.hours &&
-        question.time.minutes === userAnswer.minutes;
+        question.time.hours === userAnswer.hours && question.time.minutes === userAnswer.minutes;
 
       answerQuizQuestion(questionId, correct);
       return correct;

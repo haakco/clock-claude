@@ -1,18 +1,15 @@
-import { useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useEffect } from 'react';
 import { AnalogClock } from './components/Clock';
+import { BlueThemeDecorations, PinkThemeDecorations } from './components/Decorations';
 import { TimeDisplayInput } from './components/DigitalDisplay';
-import { ClockQuiz } from './components/Quiz';
-import { Header } from './components/Layout';
 import { EncouragingMessage } from './components/Feedback';
-import {
-  BlueThemeDecorations,
-  PinkThemeDecorations,
-} from './components/Decorations';
-import { useThemeStore } from './stores/themeStore';
-import { useGameStore } from './stores/gameStore';
-import { getTheme } from './themes';
+import { Header } from './components/Layout';
+import { ClockQuiz } from './components/Quiz';
 import { useTime } from './hooks/useTime';
+import { useGameStore } from './stores/gameStore';
+import { useThemeStore } from './stores/themeStore';
+import { getTheme } from './themes';
 
 function App() {
   const theme = useThemeStore((state) => state.theme);
@@ -76,16 +73,10 @@ function App() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
             >
-              <h2
-                className="text-lg font-bold mb-2"
-                style={{ color: colors.secondary }}
-              >
+              <h2 className="text-lg font-bold mb-2" style={{ color: colors.secondary }}>
                 How to Play
               </h2>
-              <div
-                className="text-base space-y-1"
-                style={{ color: colors.secondary }}
-              >
+              <div className="text-base space-y-1" style={{ color: colors.secondary }}>
                 <p>👆 Drag the clock hands to change the time</p>
                 <p>🎯 Look at the small clocks and enter the time shown</p>
                 <p>📝 Read the word puzzles and enter the matching time</p>
@@ -106,10 +97,7 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer
-        className="text-center py-4 text-sm opacity-50"
-        style={{ color: colors.secondary }}
-      >
+      <footer className="text-center py-4 text-sm opacity-50" style={{ color: colors.secondary }}>
         Learn to Tell Time - Made with ❤️ for kids
       </footer>
     </div>

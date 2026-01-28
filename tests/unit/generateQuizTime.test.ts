@@ -1,12 +1,9 @@
-import { describe, it, expect } from 'vitest';
-import {
-  generateQuizTime,
-  generateMultipleQuizTimes,
-} from '../../src/utils/generateQuizTime';
+import { describe, expect, it } from 'vitest';
+import { generateMultipleQuizTimes, generateQuizTime } from '../../src/utils/generateQuizTime';
 
 describe('generateQuizTime', () => {
   describe('easy difficulty', () => {
-    it('generates only o\'clock times', () => {
+    it("generates only o'clock times", () => {
       for (let i = 0; i < 20; i++) {
         const time = generateQuizTime('easy');
         expect(time.minutes).toBe(0);

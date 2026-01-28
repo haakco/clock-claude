@@ -1,6 +1,6 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import { useGameStore } from '../../stores/gameStore';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Star, Zap } from 'lucide-react';
+import { useGameStore } from '../../stores/gameStore';
 
 export function ScoreDisplay() {
   const { score, streak } = useGameStore();

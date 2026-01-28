@@ -1,4 +1,4 @@
-import { useRef, useEffect, useLayoutEffect, useCallback } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 import { useThemeStore } from '../../stores/themeStore';
 import { getTheme } from '../../themes';
 
@@ -36,7 +36,7 @@ export function WheelPicker({
     if (containerRef.current && !isUserScrollingRef.current) {
       containerRef.current.scrollTop = targetScrollTop;
     }
-  }, [value, targetScrollTop]);
+  }, [targetScrollTop]);
 
   const snapToNearest = useCallback(() => {
     if (!containerRef.current || isRepositioningRef.current) return;

@@ -1,8 +1,8 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { formatTimeForSpeech } from '../../src/hooks/useSpeech';
 
 describe('formatTimeForSpeech', () => {
-  describe('o\'clock times', () => {
+  describe("o'clock times", () => {
     it('should say "X o\'clock" for times on the hour', () => {
       expect(formatTimeForSpeech(3, 0, 'PM')).toBe("3 o'clock PM");
       expect(formatTimeForSpeech(12, 0, 'AM')).toBe("12 o'clock AM");

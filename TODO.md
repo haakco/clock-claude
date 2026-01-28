@@ -178,7 +178,7 @@ _Reference: [Responsive Design](docs/plan.md#responsive-design)_
 - [x] Implement tablet layout (stacked)
 - [x] Implement mobile layout (single column)
 - [x] Ensure 44x44px minimum touch targets
-- [ ] Test on various screen sizes
+- [x] Test on various screen sizes
 
 ---
 
@@ -190,24 +190,24 @@ _Reference: [Testing Strategy](docs/plan.md#testing-strategy)_
 - [x] Test `timeConversion` utilities
 - [x] Test `timeToWords` function
 - [x] Test `generateQuizTime` function
-- [ ] Test score calculation logic
+- [x] Test score calculation logic
 
 ### Component Tests
 _Reference: [Testing Strategy](docs/plan.md#testing-strategy)_
 
-- [ ] Test `AnalogClock` hand positions
-- [ ] Test `WheelPicker` input/output
-- [ ] Test `ThemeToggle` functionality
-- [ ] Test quiz answer validation
+- [x] Test `AnalogClock` hand positions
+- [x] Test `WheelPicker` input/output
+- [x] Test `ThemeToggle` functionality
+- [x] Test quiz answer validation
 
 ### E2E Tests
 _Reference: [Testing Strategy](docs/plan.md#testing-strategy)_
 
 - [x] Test complete quiz flow (scaffolded)
-- [ ] Test clock hand dragging
-- [ ] Test digital-to-analog sync
+- [x] Test clock hand dragging
+- [x] Test digital-to-analog sync
 - [x] Test theme switching (scaffolded)
-- [ ] Test mobile touch interactions
+- [x] Test mobile touch interactions
 
 ---
 

@@ -1,6 +1,6 @@
-import { Time } from '../../types';
 import { useThemeStore } from '../../stores/themeStore';
 import { getTheme } from '../../themes';
+import type { Time } from '../../types';
 import { hourToAngle, minuteToAngle } from '../../utils/timeConversion';
 
 interface MiniClockProps {
@@ -70,7 +70,7 @@ export function MiniClock({
         />
 
         {/* Hour markers */}
-        {[...Array(12)].map((_, i) => {
+        {[...new Array(12)].map((_, i) => {
           const angle = (i * 30 - 90) * (Math.PI / 180);
           const outerR = radius - 3;
           const innerR = i % 3 === 0 ? radius - 10 : radius - 7;
