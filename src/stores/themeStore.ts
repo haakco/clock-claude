@@ -20,6 +20,6 @@ export const useThemeStore = create<ThemeState>()(
     }),
     {
       name: 'clock-game-theme',
-    }
-  )
+    },
+  ),
 );

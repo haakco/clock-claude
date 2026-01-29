@@ -57,7 +57,7 @@ function getPreferredVoice(): SpeechSynthesisVoice | null {
     cachedVoices.find(
       (v) =>
         v.lang.startsWith('en') &&
-        (v.name.includes('Female') || v.name.includes('Samantha') || v.name.includes('Victoria'))
+        (v.name.includes('Female') || v.name.includes('Samantha') || v.name.includes('Victoria')),
     ) ?? null
   );
 }
@@ -210,7 +210,7 @@ export function useSpeech() {
         }, 100);
       }
     },
-    [soundEnabled, kokoro]
+    [soundEnabled, kokoro],
   );
 
   const speakTime = useCallback(
@@ -218,7 +218,7 @@ export function useSpeech() {
       const timeText = formatTimeForSpeech(hours, minutes, period);
       speak(timeText);
     },
-    [speak]
+    [speak],
   );
 
   const speakTime24 = useCallback(
@@ -226,7 +226,7 @@ export function useSpeech() {
       const timeText = formatTime24ForSpeech(hours, minutes, period);
       speak(timeText);
     },
-    [speak]
+    [speak],
   );
 
   return {

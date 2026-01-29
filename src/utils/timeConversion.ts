@@ -95,7 +95,7 @@ export function calculateAngle(
   centerX: number,
   centerY: number,
   pointX: number,
-  pointY: number
+  pointY: number,
 ): number {
   const deltaX = pointX - centerX;
   const deltaY = pointY - centerY;

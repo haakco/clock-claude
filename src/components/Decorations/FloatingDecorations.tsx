@@ -93,7 +93,7 @@ export function FloatingDecorations({
               {...(item.filled && { fill: 'currentColor' })}
             />
           </motion.div>
-        ))
+        )),
       )}
 
       {/* Theme-specific additional decorations */}

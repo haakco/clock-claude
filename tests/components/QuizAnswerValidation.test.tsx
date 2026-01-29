@@ -197,7 +197,7 @@ describe('Quiz Answer Validation', () => {
   describe('edge cases', () => {
     it('validates 1:00 correctly', () => {
       expect(
-        timesEqual({ hours: 1, minutes: 0, period: 'PM' }, { hours: 1, minutes: 0, period: 'PM' })
+        timesEqual({ hours: 1, minutes: 0, period: 'PM' }, { hours: 1, minutes: 0, period: 'PM' }),
       ).toBe(true);
     });
 
@@ -205,14 +205,14 @@ describe('Quiz Answer Validation', () => {
       expect(
         timesEqual(
           { hours: 11, minutes: 55, period: 'PM' },
-          { hours: 11, minutes: 55, period: 'PM' }
-        )
+          { hours: 11, minutes: 55, period: 'PM' },
+        ),
       ).toBe(true);
     });
 
     it('validates single-digit minutes', () => {
       expect(
-        timesEqual({ hours: 7, minutes: 5, period: 'AM' }, { hours: 7, minutes: 5, period: 'AM' })
+        timesEqual({ hours: 7, minutes: 5, period: 'AM' }, { hours: 7, minutes: 5, period: 'AM' }),
       ).toBe(true);
     });
 
@@ -220,8 +220,8 @@ describe('Quiz Answer Validation', () => {
       expect(
         timesEqual(
           { hours: 10, minutes: 30, period: 'AM' },
-          { hours: 10, minutes: 30, period: 'PM' }
-        )
+          { hours: 10, minutes: 30, period: 'PM' },
+        ),
       ).toBe(false);
     });
   });

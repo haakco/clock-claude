@@ -242,7 +242,7 @@ test.describe('Digital-to-Analog Sync', () => {
     // Check that a time-in-words display exists
     // Common patterns: "o'clock", "half past", "quarter past", "quarter to"
     const timeInWords = page.getByText(
-      /(o'clock|half past|quarter past|quarter to|minutes? past|minutes? to)/i
+      /(o'clock|half past|quarter past|quarter to|minutes? past|minutes? to)/i,
     );
 
     // At least one time-in-words display should be visible

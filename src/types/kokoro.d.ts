@@ -8,12 +8,12 @@ declare module 'https://cdn.jsdelivr.net/npm/kokoro-js@1.2.1/+esm' {
         dtype?: 'fp32' | 'q8';
         device?: 'webgpu' | 'wasm';
         progress_callback?: (progress: { status: string; loaded?: number; total?: number }) => void;
-      }
+      },
     ): Promise<KokoroTTS>;
 
     generate(
       text: string,
-      options: { voice: string }
+      options: { voice: string },
     ): Promise<{
       toBlob(): Blob;
     }>;

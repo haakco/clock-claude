@@ -47,7 +47,7 @@ export function useClockDrag({
       const pos = getEventPosition(e);
       return calculateAngle(center.x, center.y, pos.x, pos.y);
     },
-    [getClockCenter, getEventPosition]
+    [getClockCenter, getEventPosition],
   );
 
   const handleMinuteMove = useCallback(
@@ -62,7 +62,7 @@ export function useClockDrag({
 
       onMinuteChange(minutes);
     },
-    [getAngleFromEvent, onMinuteChange, snapToFive]
+    [getAngleFromEvent, onMinuteChange, snapToFive],
   );
 
   const handleHourMove = useCallback(
@@ -76,7 +76,7 @@ export function useClockDrag({
 
       onHourChange(hour);
     },
-    [getAngleFromEvent, onHourChange]
+    [getAngleFromEvent, onHourChange],
   );
 
   const handleMinuteEnd = useCallback(() => {

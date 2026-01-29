@@ -31,7 +31,7 @@ export function useTime() {
         minutes,
       });
     },
-    [setCurrentTime]
+    [setCurrentTime],
   );
 
   const setHours = useCallback(
@@ -42,7 +42,7 @@ export function useTime() {
         hours,
       });
     },
-    [setCurrentTime]
+    [setCurrentTime],
   );
 
   const setPeriod = useCallback(
@@ -53,14 +53,14 @@ export function useTime() {
         period,
       });
     },
-    [setCurrentTime]
+    [setCurrentTime],
   );
 
   const setFullTime = useCallback(
     (time: Time) => {
       setCurrentTime(time);
     },
-    [setCurrentTime]
+    [setCurrentTime],
   );
 
   // Get angles for clock hands

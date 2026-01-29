@@ -144,19 +144,28 @@ describe('timeConversion', () => {
   describe('timesEqual', () => {
     it('returns true for equal times', () => {
       expect(
-        timesEqual({ hours: 3, minutes: 30, period: 'PM' }, { hours: 3, minutes: 30, period: 'PM' })
+        timesEqual(
+          { hours: 3, minutes: 30, period: 'PM' },
+          { hours: 3, minutes: 30, period: 'PM' },
+        ),
       ).toBe(true);
     });
 
     it('returns false for different hours', () => {
       expect(
-        timesEqual({ hours: 3, minutes: 30, period: 'PM' }, { hours: 4, minutes: 30, period: 'PM' })
+        timesEqual(
+          { hours: 3, minutes: 30, period: 'PM' },
+          { hours: 4, minutes: 30, period: 'PM' },
+        ),
       ).toBe(false);
     });
 
     it('returns false for different periods', () => {
       expect(
-        timesEqual({ hours: 3, minutes: 30, period: 'PM' }, { hours: 3, minutes: 30, period: 'AM' })
+        timesEqual(
+          { hours: 3, minutes: 30, period: 'PM' },
+          { hours: 3, minutes: 30, period: 'AM' },
+        ),
       ).toBe(false);
     });
   });

@@ -121,7 +121,7 @@ export const useGameStore = create<GameState>()(
       answerQuizQuestion: (id, correct) => {
         set((state) => ({
           quizQuestions: state.quizQuestions.map((q) =>
-            q.id === id ? { ...q, answered: true, correct } : q
+            q.id === id ? { ...q, answered: true, correct } : q,
           ),
         }));
         if (correct) {
@@ -166,6 +166,6 @@ export const useGameStore = create<GameState>()(
         difficulty: state.difficulty,
         soundEnabled: state.soundEnabled,
       }),
-    }
-  )
+    },
+  ),
 );

@@ -37,7 +37,7 @@ export function useQuiz() {
       answerQuizQuestion(questionId, correct);
       return correct;
     },
-    [quizQuestions, answerQuizQuestion]
+    [quizQuestions, answerQuizQuestion],
   );
 
   const checkWordProblemAnswer = useCallback(
@@ -53,7 +53,7 @@ export function useQuiz() {
       answerWordProblem(correct);
       return correct;
     },
-    [wordProblem, answerWordProblem]
+    [wordProblem, answerWordProblem],
   );
 
   const refreshQuestions = useCallback(() => {
@@ -67,7 +67,7 @@ export function useQuiz() {
       // For now, we'll just regenerate all
       generateNewQuizQuestions();
     },
-    [generateNewQuizQuestions]
+    [generateNewQuizQuestions],
   );
 
   const refreshWordProblem = useCallback(() => {

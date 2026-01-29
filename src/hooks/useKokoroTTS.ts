@@ -50,6 +50,39 @@ function markKokoroDownloaded(): void {
   }
 }
 
+/**
+ * Detect optimal device for Kokoro TTS (WebGPU or WASM fallback)
+ */
+async function detectOptimalDevice(): Promise<'webgpu' | 'wasm'> {
+  if (typeof navigator === 'undefined' || !('gpu' in navigator)) {
+    return 'wasm';
+  }
+
+  try {
+    const gpu = navigator.gpu as GPU;
+    const adapter = await gpu.requestAdapter();
+    return adapter ? 'webgpu' : 'wasm';
+  } catch {
+    return 'wasm';
+  }
+}
+
+/**
+ * Create progress callback for model loading
+ */
+function createProgressCallback(
+  setState: React.Dispatch<React.SetStateAction<KokoroTTSState>>,
+): (progress: { status: string; loaded?: number; total?: number }) => void {
+  return (progress) => {
+    if (progress.status === 'progress' && progress.total) {
+      const percent = Math.round((progress.loaded! / progress.total) * 80) + 10;
+      setState((prev) => ({ ...prev, loadProgress: percent }));
+    } else if (progress.status === 'done') {
+      setState((prev) => ({ ...prev, loadProgress: 95 }));
+    }
+  };
+}
+
 export function useKokoroTTS() {
   const [state, setState] = useState<KokoroTTSState>({
     isAvailable: false,
@@ -102,32 +135,13 @@ export function useKokoroTTS() {
 
         setState((prev) => ({ ...prev, loadProgress: 10 }));
 
-        // Check WebGPU availability for optimal performance
-        let device: 'webgpu' | 'wasm' = 'wasm';
-        if (typeof navigator !== 'undefined' && 'gpu' in navigator) {
-          try {
-            const gpu = navigator.gpu as GPU;
-            const adapter = await gpu.requestAdapter();
-            if (adapter) {
-              device = 'webgpu';
-            }
-          } catch {
-            // WebGPU not available, use WASM
-          }
-        }
+        const device = await detectOptimalDevice();
 
         // Load the model
         kokoroInstance = await KokoroTTS.from_pretrained('onnx-community/Kokoro-82M-v1.0-ONNX', {
           dtype: device === 'webgpu' ? 'fp32' : 'q8',
           device,
-          progress_callback: (progress: { status: string; loaded?: number; total?: number }) => {
-            if (progress.status === 'progress' && progress.total) {
-              const percent = Math.round((progress.loaded! / progress.total) * 80) + 10;
-              setState((prev) => ({ ...prev, loadProgress: percent }));
-            } else if (progress.status === 'done') {
-              setState((prev) => ({ ...prev, loadProgress: 95 }));
-            }
-          },
+          progress_callback: createProgressCallback(setState),
         });
 
         markKokoroDownloaded();

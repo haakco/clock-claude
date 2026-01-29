@@ -89,7 +89,7 @@ export function useSound() {
       oscillator.start(ctx.currentTime);
       oscillator.stop(ctx.currentTime + duration);
     },
-    [soundEnabled]
+    [soundEnabled],
   );
 
   // Play a gentle "pop" sound using noise burst
@@ -181,7 +181,7 @@ export function useSound() {
         }
       }
     },
-    [soundEnabled, playTone, playPop]
+    [soundEnabled, playTone, playPop],
   );
 
   return { playSound };
