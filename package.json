@@ -22,7 +22,7 @@
     "@logtape/logtape": "^2.0.2",
     "@radix-ui/react-tooltip": "^1.2.8",
     "@tailwindcss/postcss": "^4.1.18",
-    "@tailwindcss/vite": "^4.1.18",
+    "@tailwindcss/vite": "^4.3.0",
     "babel-plugin-react-compiler": "^1.0.0",
     "canvas-confetti": "^1.9.4",
     "framer-motion": "^12.29.2",
@@ -44,7 +44,7 @@
     "@types/node": "^25.0.10",
     "@types/react": "^19.2.10",
     "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^5.1.2",
+    "@vitejs/plugin-react": "^5.2.0",
     "@vitest/coverage-v8": "^4.1.8",
     "autoprefixer": "^10.4.23",
     "jscpd": "^4.0.7",
@@ -52,7 +52,7 @@
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.18",
     "typescript": "~5.9.3",
-    "vite": "^7.3.1",
+    "vite": "^8.0.16",
     "vitest": "^4.1.8"
   }
 }
