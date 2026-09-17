@@ -17,7 +17,13 @@ concurrency:
 
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: haakco-build
+    container:
+      image: ghcr.io/haakco/actions-runner:1
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+      options: --user root
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -46,7 +52,13 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: self-hosted
+    runs-on: haakco-build
+    container:
+      image: ghcr.io/haakco/actions-runner:1
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+      options: --user root
     needs: build
     steps:
       - name: Deploy to GitHub Pages
